@@ -1,0 +1,11 @@
+obj/*
+*.sln
+*.vcxproj
+*.filters
+*.user
+*.sdf
+*.exe
+*.ilk
+*.pdb
+*.lib
+*.opensdf
