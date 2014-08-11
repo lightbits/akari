@@ -7,12 +7,14 @@
 
 struct Mesh
 {
+	Mesh();
 	GLuint vertex_buffer;
 	GLuint index_buffer;
 	int num_indices;
 	int num_vertices;
 
 	std::function<void()> draw;
+	void dispose();
 };
 
 struct Model
@@ -22,6 +24,7 @@ struct Model
 	Mesh mesh;
 	mat4 mat;
 
+	void dispose();
 	void draw();
 };
 

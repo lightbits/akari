@@ -79,6 +79,16 @@ void blend_mode(bool enabled, GLenum src, GLenum dest, GLenum func)
 	}
 }
 
+void array_buffer(uint vertex_buffer)
+{
+	glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
+}
+
+void element_buffer(uint index_buffer)
+{
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer);
+}
+
 vec4 to_rgba(uint32 hex)
 {
 	return vec4(
@@ -99,7 +109,36 @@ void use_shader(Shader shader)
 	current.use();
 }
 
-void attribfv(string name, GLsizei num_components, GLsizei stride, GLsizei offset)
+struct Attribfv
+{
+	string name;
+	int size;
+	int offset;
+};
+vector<Attribfv> attrib_stack;
+int attrib_stack_offset = 0;
+void attribfv_append(string name, int num_components)
+{
+	Attribfv a;
+	a.name = name;
+	a.size = num_components;
+	a.offset = attrib_stack_offset;
+	attrib_stack_offset += num_components;
+	attrib_stack.push_back(a);
+}
+
+void attribfv_enable()
+{
+	for (int i = 0; i < attrib_stack.size(); i++)
+	{
+		Attribfv a = attrib_stack[i];
+		attribfv(a.name, a.size, attrib_stack_offset, a.offset);
+	}
+	attrib_stack.clear();
+	attrib_stack_offset = 0;
+}
+
+void attribfv(string name, int num_components, int stride, int offset)
 { 
 	current.set_attribfv(name, num_components, stride, offset); 
 }

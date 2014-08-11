@@ -18,13 +18,14 @@ struct Font
 	unordered_map<char, Glyph> glyphs;
 	uint texture;
 	int char_height;
+
+	void dispose();
 };
 
 void use_font(Font &font);
 bool load_font(Font &font, 
 			   string path, 
 			   string char_set = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
-void delete_font(Font &font);
 vec2i measure_string(const string &text);
 void draw_string(float x, float y, 
 				 const string &text,

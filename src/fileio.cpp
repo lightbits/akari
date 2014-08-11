@@ -43,3 +43,9 @@ std::string read_word(std::stringstream &ss)
 	std::string word; ss>>word;
 	return word;
 }
+
+std::string get_filename(const std::string &path)
+{
+	std::size_t i = path.find_last_of('/');
+	return path.substr(i + 1, path.length() - i);
+}

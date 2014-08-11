@@ -19,6 +19,10 @@ solution "kyoko"
 	-- Include demo projects
 	include "00base"
 	include "01cube"
+	include "02model"
+	include "03scattering"
+	include "04gui"
+	include "05texture"
 
 	-- Specify the base graphics library
 	project "kyoko"

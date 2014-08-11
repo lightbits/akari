@@ -1,4 +1,4 @@
-project "01cube"
+project(path.getname(os.getcwd()))
 	kind "ConsoleApp"
 	language "c++"
 	objdir "../obj"

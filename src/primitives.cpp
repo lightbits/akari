@@ -1,5 +1,6 @@
 #include "primitives.h"
 #include "gfx.h"
+#include "log.h"
 
 Mesh gen_normal_cube()
 {
@@ -98,14 +99,14 @@ Mesh gen_grid(int lines)
 
 Mesh gen_tex_quad()
 {
-	const float hs = 0.5f;
+	const float hs = 1.0f;
 
 	// All faces are oriented counter-clockwise outwards
 	float vertices[] = {
-		-hs, -hs, 0.0f, 0.0f, 0.0f,
-		 hs, -hs, 0.0f, 1.0f, 0.0f,
-		 hs,  hs, 0.0f, 1.0f, 1.0f,
-		-hs,  hs, 0.0f, 0.0f, 1.0f
+		-hs, -hs, 0.0f, 0.0f,
+		 hs, -hs, 1.0f, 0.0f,
+		 hs,  hs, 1.0f, 1.0f,
+		-hs,  hs, 0.0f, 1.0f
 	};
 
 	uint8 indices[] = { 0, 1, 2, 2, 3, 0 };
@@ -118,8 +119,8 @@ Mesh gen_tex_quad()
 	mesh.draw = [=]() {
 		glBindBuffer(GL_ARRAY_BUFFER, mesh.vertex_buffer);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.index_buffer);
-		attribfv("position", 3, 5, 0);
-		attribfv("texel", 2, 5, 3);
+		attribfv("position", 2, 4, 0);
+		attribfv("texel", 2, 4, 2);
 		glDrawElements(GL_TRIANGLES, mesh.num_indices, GL_UNSIGNED_BYTE, 0);
 	};
 	return mesh;
@@ -157,4 +158,24 @@ void Model::draw()
 {
 	uniform("model", mat);
 	mesh.draw();
+}
+
+void Model::dispose()
+{
+	mesh.dispose();
+}
+
+Mesh::Mesh()
+{
+	vertex_buffer = 0;
+	index_buffer = 0;
+	num_indices = 0;
+	num_vertices = 0;
+	draw = []() { APP_LOG << "[Warning] Mesh not initialized\n"; };
+}
+
+void Mesh::dispose()
+{
+	glDeleteBuffers(1, &vertex_buffer);
+	glDeleteBuffers(1, &index_buffer);
 }

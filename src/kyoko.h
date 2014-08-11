@@ -1,9 +1,11 @@
 #ifndef KYOKO_H
 #define KYOKO_H
+#include "fileio.h"
 #include "opengl.h"
 #include "log.h"
 #include "shader.h"
 #include "primitives.h"
+#include "meshloader.h"
 #include "timer.h"
 #include "types.h"
 #include "gfx.h"
@@ -11,4 +13,7 @@
 #include "matrix.h"
 #include "font.h"
 #include "noise.h"
+#include "camera.h"
+#include "input.h"
+#include "texture.h"
 #endif

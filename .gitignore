@@ -9,3 +9,4 @@ obj/*
 *.pdb
 *.lib
 *.opensdf
+*.suo

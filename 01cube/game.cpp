@@ -32,7 +32,7 @@ void free_game()
 {
 	shader_font.dispose();
 	shader_cube.dispose();
-	delete_font(font);
+	font.dispose();
 }
 
 void init_game()

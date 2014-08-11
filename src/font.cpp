@@ -1,13 +1,21 @@
 #include "font.h"
-#include "lodepng.h"
 #include "gfx.h"
 #include "log.h"
-
+#include "stb_image.h"
 
 static Font *current = nullptr;
 
+void Font::dispose()
+{
+	if (current == this)
+		current = nullptr;
+	glDeleteTextures(1, &texture);
+	glyphs.clear();
+	char_height = 0;
+}
+
 typedef unordered_map<char, Glyph> GlyphMap;
-bool is_border_pixel(const vector<uint8> &pixels, uint32 x, uint32 y, uint32 width)
+bool is_border_pixel(const uint8 *pixels, uint32 x, uint32 y, uint32 width)
 {
 	uint32 offset = (y * width + x) * 4;
 	return pixels[offset] == 0 && 
@@ -21,40 +29,30 @@ void use_font(Font &font)
 	current = &font;
 }
 
-void delete_font(Font &font)
-{
-	if (current == &font)
-		current = nullptr;
-	glDeleteTextures(1, &font.texture);
-	font.glyphs.clear();
-	font.char_height = 0;
-}
-
 bool load_font(Font &font, string path, string char_set)
 {
-	std::vector<uint8> pixels;
-	uint width, height;
-	uint error = lodepng::decode(pixels, width, height, path);
-	if (error)
+	int width, height, channels;
+	uint8 *pixels = stbi_load(path.c_str(), &width, &height, &channels, 4);
+	if (pixels == NULL)
 	{
-		APP_LOG << "Failed to load font: " << lodepng_error_text(error) << '\n';
+		APP_LOG << "Failed to load font: " << stbi_failure_reason() << '\n';
 		return false;
 	}
 
 	// The pixels are now in pixels vector, 4 bytes per pixel, ordered RGBARGBA...
 	// Row-wise, top-left to bottom-right
 
-	uint num_chars = char_set.size();
+	int num_chars = char_set.size();
 
 	font.char_height = 0;
 	font.texture = 0;
 	font.glyphs.clear();
 	
-	uint index = 0;
-	for (uint y = 0; y < height; ++y)
+	int index = 0;
+	for (int y = 0; y < height; ++y)
 	{
-		uint skip_y = 0;
-		for (uint x = 0; x < width; ++x)
+		int skip_y = 0;
+		for (int x = 0; x < width; ++x)
 		{
 			if (is_border_pixel(pixels, x, y, width) && index < num_chars)
 			{
@@ -100,6 +98,8 @@ bool load_font(Font &font, string path, string char_set)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
+	stbi_image_free(pixels);
+
 	return true;
 }
 
@@ -131,7 +131,7 @@ void draw_string(float x0, float y0, const string &text, bool centered, float sx
 	if (text.size() == 0)
 		return;
 
-	ASSERT(current != nullptr, "No font bound");
+	SDL_assert(current != nullptr);
 
 	if (centered)
 	{

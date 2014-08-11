@@ -1,47 +1,15 @@
 #include "opengl.h"
 #include "fileio.h"
 #include "log.h"
-#include "lodepng.h"
 
-uint gen_buffer(GLenum target, int size, const void *data)
+uint gen_buffer(GLenum target, int size, const void *data, GLenum usage)
 {
 	uint buffer;
 	glGenBuffers(1, &buffer);
 	glBindBuffer(target, buffer);
-	glBufferData(target, size, data, GL_STATIC_DRAW);
+	glBufferData(target, size, data, usage);
 	glBindBuffer(target, 0);
 	return buffer;
-}
-
-bool load_texture(uint &texture, 
-				  const char *filename, 
-				  GLenum min_filter, 
-				  GLenum mag_filter, 
-				  GLenum wrap_s, 
-				  GLenum wrap_t)
-{
-	vector<uint8> pixels;
-	uint width, height;
-	uint error = lodepng::decode(pixels, width, height, filename);
-
-	if (error)
-	{
-		APP_LOG << "Failed to load texture: " << error << ": " << lodepng_error_text(error) << '\n';
-		return false;
-	}
-
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-
-	// RGBA is the default parameter in the decode function
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &pixels[0]);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min_filter);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag_filter);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_s);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_t);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	return true;
 }
 
 const char *get_gl_error_msg(GLenum code)
