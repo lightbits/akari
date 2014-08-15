@@ -11,6 +11,6 @@ out vec3 vPosition;
 
 void main()
 {
-	vPosition = (view * model * vec4(position + 0.00001 * normal, 1.0)).xyz;
+	vPosition = (view * model * vec4(position + 0.1 * normal, 1.0)).xyz;
 	gl_Position = projection * vec4(vPosition, 1.0);
 }

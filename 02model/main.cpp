@@ -35,7 +35,24 @@ void print_debug_info()
 	APP_LOG << "GLSL ver.: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << '\n';
 }
 
-void handle_events(bool &running, double dt)
+void save_screenshot(SDL_Window *window)
+{
+	int width, height;
+	SDL_GetWindowSize(window, &width, &height);
+	uint8 *pixels = new uint8[width * height * 3];
+	glReadPixels(0, 0, width, height, GL_BGR, GL_UNSIGNED_BYTE, pixels);
+
+	for (int y = 0; y < height / 2; y++)
+	for (int x = 0; x < width * 3; x++)
+		std::swap(pixels[y * width * 3 + x], pixels[(height - 1 - y) * width * 3 + x]);
+
+	SDL_Surface *surface = SDL_CreateRGBSurfaceFrom(pixels, width, height, 8 * 3, width * 3, 0, 0, 0, 0);
+	SDL_SaveBMP(surface, "screenshot.bmp");
+	SDL_FreeSurface(surface);
+	delete[] pixels;
+}
+
+void handle_events(bool &running, SDL_Window *window)
 {
 	SDL_Event event;
 	while (SDL_PollEvent(&event))
@@ -45,26 +62,28 @@ void handle_events(bool &running, double dt)
 		case SDL_KEYUP:
 			if (event.key.keysym.sym == SDLK_ESCAPE)
 				running = false;
-			on_key_up(event.key.keysym.mod, event.key.keysym.sym, dt);
+			if (event.key.keysym.sym == SDLK_PRINTSCREEN)
+				save_screenshot(window);
+			on_key_up(event.key.keysym.mod, event.key.keysym.sym);
 			break;
 		case SDL_KEYDOWN:
-			on_key_down(event.key.keysym.mod, event.key.keysym.sym, dt);
+			on_key_down(event.key.keysym.mod, event.key.keysym.sym);
 			break;
 		case SDL_MOUSEMOTION:
 			if (event.motion.state & SDL_BUTTON_LMASK)
-				on_mouse_dragged(SDL_BUTTON_LEFT, event.motion.x, event.motion.y, event.motion.xrel, event.motion.yrel, dt);
+				on_mouse_dragged(SDL_BUTTON_LEFT, event.motion.x, event.motion.y, event.motion.xrel, event.motion.yrel);
 			else if (event.motion.state & SDL_BUTTON_MMASK)
-				on_mouse_dragged(SDL_BUTTON_MIDDLE, event.motion.x, event.motion.y, event.motion.xrel, event.motion.yrel, dt);
+				on_mouse_dragged(SDL_BUTTON_MIDDLE, event.motion.x, event.motion.y, event.motion.xrel, event.motion.yrel);
 			else if (event.motion.state & SDL_BUTTON_RMASK)
-				on_mouse_dragged(SDL_BUTTON_RIGHT, event.motion.x, event.motion.y, event.motion.xrel, event.motion.yrel, dt);
+				on_mouse_dragged(SDL_BUTTON_RIGHT, event.motion.x, event.motion.y, event.motion.xrel, event.motion.yrel);
 			else
-				on_mouse_moved(event.motion.x, event.motion.y, event.motion.xrel, event.motion.yrel, dt);
+				on_mouse_moved(event.motion.x, event.motion.y, event.motion.xrel, event.motion.yrel);
 			break;
 		case SDL_MOUSEBUTTONDOWN:
-			on_mouse_pressed(event.button.button, event.button.x, event.button.y, dt);
+			on_mouse_pressed(event.button.button, event.button.x, event.button.y);
 			break;
 		case SDL_MOUSEBUTTONUP:
-			on_mouse_released(event.button.button, event.button.x, event.button.y, dt);
+			on_mouse_released(event.button.button, event.button.x, event.button.y);
 			break;
 		case SDL_QUIT:
 			running = false;
@@ -91,7 +110,7 @@ int main(int argc, char **argv)
 	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 
 	SDL_Window *window = SDL_CreateWindow(
-		"01cube",
+		"Sample Application",
 		SDL_WINDOWPOS_CENTERED,
 		SDL_WINDOWPOS_CENTERED,
 		window_width, window_height,
@@ -142,7 +161,7 @@ int main(int argc, char **argv)
 	while (running)
 	{
 		double frame_begin = get_elapsed_time();
-		handle_events(running, frame_time);
+		handle_events(running, window);
 		update_game(frame_time);
 		render_game(frame_time);
 		SDL_GL_SwapWindow(window);

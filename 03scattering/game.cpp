@@ -76,7 +76,7 @@ bool load_game(int width, int height)
 		!shader_depth.load_from_file("./depth.vs", "./depth.fs") ||
 		!shader_scattering.load_from_file("./scattering.vs", "./scattering.fs"))
 		return false;
-	if (!load_mesh_indexed(mesh_teapot, "../data/models/cube.obj"))
+	if (!load_mesh_indexed(mesh_teapot, "../data/models/teapot.obj"))
 		return false;
 
 	mesh_quad = gen_tex_quad();
@@ -108,17 +108,17 @@ void update_game(float dt)
 
 	float t = get_elapsed_time();
 	mat_projection_light = perspective(PI / 4.0f, window_width / float(window_height), z_near, z_far);
-	mat_view_light = translate(0.0f, 0.0f, -0.3f) * rotateX(-0.43f);
+	mat_view_light = translate(0.0f, 0.0f, -2.0f) * rotateX(-0.43f);
 
 	mat_projection = perspective(PI / 4.0f, window_width / float(window_height), z_near, z_far);
-	mat_view = translate(0.0f, 0.0f, -2.0f) * rotateX(-0.23f) * rotateY(t);
+	mat_view = translate(0.0f, 0.0f, -2.0f) * rotateX(-0.43f) * rotateY(t);
 
 	light_pos = vec3(glm::inverse(mat_view_light) * vec4(0.0f, 0.0f, 0.0f, 1.0f));
 }
 
 void render_game(float dt)
 {
-	mat4 mat_model = scale(0.5f);
+	mat4 mat_model = scale(0.07f);
 
 	// Render depth map
 

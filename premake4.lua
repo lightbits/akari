@@ -21,8 +21,8 @@ solution "kyoko"
 	include "01cube"
 	include "02model"
 	include "03scattering"
-	include "04gui"
-	include "05texture"
+	include "04texture"
+	include "05shadows"
 
 	-- Specify the base graphics library
 	project "kyoko"
