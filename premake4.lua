@@ -22,7 +22,7 @@ solution "kyoko"
 	include "02model"
 	include "03scattering"
 	include "04texture"
-	include "05shadows"
+	include "05gfx2d"
 
 	-- Specify the base graphics library
 	project "kyoko"

@@ -52,7 +52,7 @@ void save_screenshot(SDL_Window *window)
 	delete[] pixels;
 }
 
-void handle_events(bool &running, SDL_Window *window)
+void handle_events(bool &running, SDL_Window *window, float dt)
 {
 	SDL_Event event;
 	while (SDL_PollEvent(&event))
@@ -64,26 +64,26 @@ void handle_events(bool &running, SDL_Window *window)
 				running = false;
 			if (event.key.keysym.sym == SDLK_PRINTSCREEN)
 				save_screenshot(window);
-			on_key_up(event.key.keysym.mod, event.key.keysym.sym);
+			on_key_up(event.key.keysym.mod, event.key.keysym.sym, dt);
 			break;
 		case SDL_KEYDOWN:
-			on_key_down(event.key.keysym.mod, event.key.keysym.sym);
+			on_key_down(event.key.keysym.mod, event.key.keysym.sym, dt);
 			break;
 		case SDL_MOUSEMOTION:
 			if (event.motion.state & SDL_BUTTON_LMASK)
-				on_mouse_dragged(SDL_BUTTON_LEFT, event.motion.x, event.motion.y, event.motion.xrel, event.motion.yrel);
+				on_mouse_dragged(SDL_BUTTON_LEFT, event.motion.x, event.motion.y, event.motion.xrel, event.motion.yrel, dt);
 			else if (event.motion.state & SDL_BUTTON_MMASK)
-				on_mouse_dragged(SDL_BUTTON_MIDDLE, event.motion.x, event.motion.y, event.motion.xrel, event.motion.yrel);
+				on_mouse_dragged(SDL_BUTTON_MIDDLE, event.motion.x, event.motion.y, event.motion.xrel, event.motion.yrel, dt);
 			else if (event.motion.state & SDL_BUTTON_RMASK)
-				on_mouse_dragged(SDL_BUTTON_RIGHT, event.motion.x, event.motion.y, event.motion.xrel, event.motion.yrel);
+				on_mouse_dragged(SDL_BUTTON_RIGHT, event.motion.x, event.motion.y, event.motion.xrel, event.motion.yrel, dt);
 			else
-				on_mouse_moved(event.motion.x, event.motion.y, event.motion.xrel, event.motion.yrel);
+				on_mouse_moved(event.motion.x, event.motion.y, event.motion.xrel, event.motion.yrel, dt);
 			break;
 		case SDL_MOUSEBUTTONDOWN:
-			on_mouse_pressed(event.button.button, event.button.x, event.button.y);
+			on_mouse_pressed(event.button.button, event.button.x, event.button.y, dt);
 			break;
 		case SDL_MOUSEBUTTONUP:
-			on_mouse_released(event.button.button, event.button.x, event.button.y);
+			on_mouse_released(event.button.button, event.button.x, event.button.y, dt);
 			break;
 		case SDL_QUIT:
 			running = false;
@@ -161,7 +161,7 @@ int main(int argc, char **argv)
 	while (running)
 	{
 		double frame_begin = get_elapsed_time();
-		handle_events(running, window);
+		handle_events(running, window, frame_time);
 		update_game(frame_time);
 		render_game(frame_time);
 		SDL_GL_SwapWindow(window);

@@ -14,13 +14,10 @@ bool load_game(int width, int height)
 	window_width = width;
 	window_height = height;
 
-	if (!load_texture_from_file(tex_test, "../data/fonts/proggytinyttsz_8x12.png"))
+	if (!load_texture_from_file(tex_test, "../data/fonts/proggytinyttsz_8x12.png", GL_LINEAR, GL_LINEAR, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE))
 		return false;
 	if (!shader_tex.load_from_file("../data/shaders/texture.vs", "../data/shaders/texture.fs"))
 		return false;
-
-	use_texture_2D(tex_test);
-	tex_parameter(GL_NEAREST, GL_NEAREST);
 	return true;
 }
 
@@ -45,7 +42,7 @@ void render_game(float dt)
 	clear(0x2a2a2aff, 1.0);
 
 	use_shader(shader_tex);
-	use_texture_2D(tex_test);
+	glBindTexture(GL_TEXTURE_2D, tex_test);
 	uniform("tex", 0);
 	quad.draw();
 }

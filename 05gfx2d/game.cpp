@@ -21,11 +21,21 @@ int
 	window_height;
 mat4
 	mat_ortho;
+uint
+	tex_test;
+Font
+	font_debug;
 
 bool load_game(int width, int height)
 {
 	window_width = width;
 	window_height = height;
+
+	if (!load_texture_from_file(tex_test, "../data/textures/tex0.png", GL_NEAREST, GL_NEAREST))
+		return false;
+
+	if (!load_font(font_debug, "../data/fonts/proggytinyttsz_8x12.png"))
+		return false;
 
 	gfx2d::init(width, height);
 	return true;
@@ -82,11 +92,17 @@ void draw_panel(float x, float y, float width, float height)
 void render_game(float dt)
 {
 	using namespace gfx2d;
+	blend_mode(true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_FUNC_ADD);
+	glLineWidth(1.0f);
 	clearc(0x4E4B61FF);
 	begin();
 	draw_textbox(10.0f, 60.0f, 64.0f, 14.0f);
 	draw_panel(100.0f, 160.0f, 200.0f, 100.0f);
 	draw_panel(300.0f, 160.0f, 100.0f, 100.0f);
+	tex_rectangle(101.0f, 161.0f, 198.0f, 98.0f, tex_test);
+
+	use_font(font_debug);
+	draw_string(5.0f, 5.0f, "Hello World!");
 	end();
 }
 
