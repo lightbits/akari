@@ -16,6 +16,7 @@ A 3D graphics library full of helpful functions and things.
 	[an implementation](https://github.com/otaku690/SparseVoxelOctree)  
 	[voxelization](http://www.alexandre-pestana.com/voxelization-using-gpu-hardware-rasterizer/)  
 	[shadow casting](http://www.alexandre-pestana.com/dynamic-shadow-casting-point-lights-tiled-deferred-rendering/)  
+	[gtc 2012](http://www.icare3d.org/research/GTC2012_Voxelization_public.pdf)
 * Tessendorf water  
 * Volumetric clouds  
 	Compute shader
