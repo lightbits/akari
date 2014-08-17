@@ -24,6 +24,8 @@ A 3D graphics library full of helpful functions and things.
 	Sliced volume rendering
 	[intel samples](https://github.com/GameTechDev)
 	[intel cloud sample](https://software.intel.com/en-us/blogs/2014/03/31/cloud-rendering-sample)
+* Volumetric fog  
+	http://www.alexandre-pestana.com/volumetric-lights/  
 * Terrains + tesselation  
 	iq, improved perlin noise
 * Motion blur  

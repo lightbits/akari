@@ -330,7 +330,9 @@ bool load_game(int width, int height)
 	if (!load_font(font_debug, "../data/fonts/proggytinyttsz_8x12.png"))
 		return false;
 
-	if (!load_mesh_indexed(mesh_sponza, "c:/programming/resources/3d/crytek-sponza/sponza.obj"))
+	//if (!load_mesh_indexed(mesh_sponza, "../../../resources/models/crytek-sponza/sponza.obj"))
+	//	return false;
+	if (!load_mesh_indexed(mesh_sponza, "../data/models/teapot.obj"))
 		return false;
 
 	if (!load_mesh_indexed(mesh_cube, "../data/models/cube.obj"))
@@ -353,7 +355,7 @@ void init_game()
 	mat_ortho = ortho(0.0f, float(window_width), float(window_height), 0.0f, 0.0f, 1.0f);
 	mat_perspective = perspective(PI / 4.0f, window_width / float(window_height), 0.1f, 5.0f);
 
-	camera.setHorizontalAngle(0.0f);
+	camera.setHorizontalAngle(-PI);
 	camera.setVerticalAngle(0.0f);
 	camera.setPosition(vec3(0.0f, 0.0f, -2.0f));
 }
@@ -361,12 +363,22 @@ void init_game()
 vec3 camera_pos = vec3(0.0f);
 void update_game(float dt)
 {
-	if (is_key_pressed('a')) camera.moveLeft(dt);
-	else if (is_key_pressed('d')) camera.moveRight(dt);
-	if (is_key_pressed('w')) camera.moveForward(dt);
-	else if (is_key_pressed('s')) camera.moveBackward(dt);
-	if (is_key_pressed(SDL_SCANCODE_LCTRL)) camera.moveDown(dt);
-	else if (is_key_pressed(SDL_SCANCODE_SPACE)) camera.moveUp(dt);
+	if (is_key_down('a')) camera.moveLeft(dt);
+	else if (is_key_down('d')) camera.moveRight(dt);
+	if (is_key_down('w')) camera.moveForward(dt);
+	else if (is_key_down('s')) camera.moveBackward(dt);
+	if (is_key_down(SDLK_LCTRL)) camera.moveDown(dt);
+	else if (is_key_down(SDLK_SPACE)) camera.moveUp(dt);
+
+	if (is_mouse_down(MouseButtonLeft))
+	{
+		vec2i m = get_mouse_pos();
+		float dx = (m.x - window_width / 2) / (float)window_width;
+		float dy = (m.y - window_height / 2) / (float)window_height;
+		float speed = 5.0f;
+		camera.rotateHorizontal(speed * sqrt(abs(dx)) * dx * dt);
+		camera.rotateVertical(speed * sqrt(abs(dy)) * dy * dt);
+	}
 
 	float t = get_elapsed_time() * 0.25f;
 	mat_view = camera.getViewMatrix();
@@ -379,12 +391,12 @@ void render_game(float dt)
 	depth_write(true);
 	clear(0x2a2a2aff, 1.0);
 
-	//use_shader(shader_cube);
-	//uniform("projection", mat_perspective);
-	//uniform("view", mat_view);
-	//uniform("model", scale(1.0f / 1000.0f));
-	//uniform("time", get_elapsed_time());
-	//mesh_sponza.draw();
+	use_shader(shader_cube);
+	uniform("projection", mat_perspective);
+	uniform("view", mat_view);
+	uniform("model", scale(1.0f / 1000.0f));
+	uniform("time", get_elapsed_time());
+	mesh_sponza.draw();
 
 	use_shader(shader_cube);
 	uniform("projection", mat_perspective);
@@ -397,20 +409,16 @@ void render_game(float dt)
 	uniform("model", translate(0.0f, -0.5f, 0.0f) * scale(1.0f, 0.05f, 1.0f));
 	mesh_cube.draw();
 
-	use_shader(shader_font);
-	use_font(font_debug);
-	uniform("projection", mat_ortho);
-	blend_mode(true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	draw_string(5.0f, 5.0f, "frametime: " + std::to_string(int(dt * 1000.0f)) + "ms");
+	//use_shader(shader_font);
+	//use_font(font_debug);
+	//uniform("projection", mat_ortho);
+	//blend_mode(true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//draw_string(5.0f, 5.0f, "frametime: " + std::to_string((long double)dt * 1000.0f) + "ms");
 }
 
 void on_key_up(uint16 mod, SDL_Keycode key, float dt) { }
 void on_key_down(uint16 mod, SDL_Keycode key, float dt) { }
 void on_mouse_moved(int x, int y, int dx, int dy, float dt) { }
-void on_mouse_dragged(int button, int x, int y, int dx, int dy, float dt) 
-{
-	camera.rotateHorizontal(dx * dt);
-	camera.rotateVertical(dy * dt);
-}
+void on_mouse_dragged(int button, int x, int y, int dx, int dy, float dt) { }
 void on_mouse_pressed(int button, int x, int y, float dt) { }
 void on_mouse_released(int button, int x, int y, float dt) { }

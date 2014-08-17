@@ -99,10 +99,10 @@ float z_far = 6.0f;
 vec3 light_pos;
 void update_game(float dt)
 {
-	if (is_key_pressed('z')) z_near += dt;
-	else if (is_key_pressed('x')) z_near -= dt;
-	if (is_key_pressed('a')) z_far += dt;
-	else if (is_key_pressed('s')) z_far -= dt;
+	if (is_key_down('z')) z_near += dt;
+	else if (is_key_down('x')) z_near -= dt;
+	if (is_key_down('a')) z_far += dt;
+	else if (is_key_down('s')) z_far -= dt;
 
 	APP_LOG << "\rnear: " << z_near << "\tfar: " << z_far << "\t\t";
 
