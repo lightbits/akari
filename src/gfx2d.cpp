@@ -59,6 +59,15 @@ void gfx2d::init(int width, int height)
 	draw_cmds.clear();
 }
 
+void gfx2d::dispose()
+{
+	glDeleteBuffers(1, &vertex_buffer);
+	glDeleteTextures(1, &blank_texture);
+	current_font = nullptr;
+	shader.dispose();
+	draw_cmds.clear();
+}
+
 void flush()
 {
 	if (draw_cmds.size() == 0)
@@ -73,7 +82,7 @@ void flush()
 	{
 		GLenum mode = draw_cmds[i].mode;
 		uint texture = draw_cmds[i].texture;
-		if (current_mode != mode || current_texture != texture)
+		if (current_mode != mode || current_texture != texture || current_mode == GL_LINE_STRIP)
 		{
 			glBindTexture(GL_TEXTURE_2D, current_texture);
 			glDrawArrays(current_mode, begin, count);
@@ -130,6 +139,7 @@ void append_data(float *data, int count, GLenum mode, uint texture)
 	vertex_count += count;
 }
 
+void gfx2d::line(vec2 p0, vec2 p1, uint color) { line(p0.x, p0.y, p1.x, p1.y, color); }
 void gfx2d::line(float x0, float y0, float x1, float y1, uint color)
 {
 	vec4 v_color = to_rgba(color);
@@ -140,6 +150,7 @@ void gfx2d::line(float x0, float y0, float x1, float y1, uint color)
 	append_data(data, 2, GL_LINES, blank_texture);
 }
 
+void gfx2d::rectangle(vec2 p, vec2 size, uint color) { rectangle(p.x, p.y, size.x, size.y, color); }
 void gfx2d::rectangle(float x, float y, float w, float h, uint color)
 {
 	vec4 v_color = to_rgba(color);
@@ -153,6 +164,7 @@ void gfx2d::rectangle(float x, float y, float w, float h, uint color)
 	append_data(data, 5, GL_LINE_STRIP, blank_texture);
 }
 
+void gfx2d::fill_rectangle(vec2 p, vec2 size, uint color) { fill_rectangle(p.x, p.y, size.x, size.y, color); }
 void gfx2d::fill_rectangle(float x, float y, float w, float h, uint color)
 {
 	vec4 v_color = to_rgba(color);
@@ -167,6 +179,7 @@ void gfx2d::fill_rectangle(float x, float y, float w, float h, uint color)
 	append_data(data, 6, GL_TRIANGLES, blank_texture);
 }
 
+void gfx2d::tex_rectangle(vec2 p, vec2 size, uint texture, uint color) { tex_rectangle(p.x, p.y, size.x, size.y, texture, color); }
 void gfx2d::tex_rectangle(float x, float y, float w, float h, uint texture, uint color)
 {
 	vec4 v_color = to_rgba(color);
@@ -208,6 +221,7 @@ vec2i gfx2d::measure_string(const string &text)
 	return vec2i(width, height);
 }
 
+void gfx2d::draw_string(vec2 p, const string &text, uint color, bool centered, float sx, float sy) { draw_string(p.x, p.y, text, color, centered, sx, sy); }
 void gfx2d::draw_string(float x0, float y0, const string &text, uint color, bool centered, float sx, float sy)
 {
 	// Nothing to draw

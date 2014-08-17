@@ -23,7 +23,8 @@ solution "kyoko"
 	include "03scattering"
 	include "04texture"
 	include "05gfx2d"
-
+	include "06arkanoid"
+	
 	-- Specify the base graphics library
 	project "kyoko"
 		kind "StaticLib"
