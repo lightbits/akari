@@ -156,19 +156,32 @@ int main(int argc, char **argv)
 	glBindVertexArray(vao);
 	glViewport(0, 0, window_width, window_height);
 
-	double frame_time = 0.0;
 	bool running = true;
+	double frame_time = 0.0;
+	double target_frame_time = 1.0 / 120.0;
+	double accumulator = 0.0;
+	double timestep = 1.0 / 120.0;
 	while (running)
 	{
 		double frame_begin = get_elapsed_time();
-		handle_events(running, window);
-		update_game(frame_time);
+		accumulator += frame_time;
+		while (accumulator >= timestep)
+		{
+			update_game(timestep);
+			accumulator -= timestep;
+		}
+
 		render_game(frame_time);
+		handle_events(running, window);
 		SDL_GL_SwapWindow(window);
 		frame_time = get_elapsed_time() - frame_begin;
 
 		if (check_gl_errors())
 			running = false;
+
+		if (frame_time < target_frame_time)
+			SDL_Delay(uint32(1000.0 * (target_frame_time - frame_time)));
+		frame_time = get_elapsed_time() - frame_begin;
 	}
 
 	SDL_GL_DeleteContext(gl_context);
