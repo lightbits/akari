@@ -8,6 +8,14 @@ A 3D graphics library full of helpful functions and things.
 
 ### todo ###
 
+* xBR scaler  
+	[description of the algorithm](http://board.byuu.org/viewtopic.php?f=10&t=2248)  
+	[implementation](http://sourceforge.net/p/paintown/code/7842/tree/trunk/src/util/graphics/sdl/xbr.cpp)  
+	[mame implementation](http://sourceforge.net/projects/hqmame/files/)  
+* Scalable height field self shadowing  
+	[paper](http://wili.cc/research/hfshadow/)  
+* Shadows  
+	[slides](http://advancedgraphics.marries.nl/lectures/03_shadows.pdf)
 * Voxel cone tracing  
 	[video](https://www.youtube.com/user/cheaterproject/videos)  
 	[slides](http://www.slideshare.net/mmostajab/voxel-based-globalillumination)  
@@ -41,7 +49,11 @@ A 3D graphics library full of helpful functions and things.
 * Volume rendering  
 	[nice paper](http://magnuswrenninge.com/content/pubs/VolumetricMethodsInVisualEffects2010.pdf)
 	[intro to volume rendering](http://graphicsrunner.blogspot.no/2009/01/volume-rendering-101.html)
+	[gpu gems](http://http.developer.nvidia.com/GPUGems/gpugems_ch39.html)  
 * 3D fluid sim  
 	[an implementaion](http://scrawkblog.com/2014/01/09/gpu-gems-to-unity-3d-fluid-simulation/)
 * imgui  
 	https://github.com/ocornut/imgui
+	
+[stuff](http://advancedgraphics.marries.nl/)
+[more stuff](http://oglplus.org/oglplus/html/examples.html)
