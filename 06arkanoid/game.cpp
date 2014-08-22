@@ -61,6 +61,7 @@ void init_game()
 	paddle = gen_object(window_width / 2.0f - PADDLE_WIDTH / 2.0f, window_height - 4.0f * PADDLE_HEIGHT, PADDLE_WIDTH, PADDLE_HEIGHT, PADDLE_COLOR);
 	ball = gen_object(window_width / 2.0f - BALL_WIDTH / 2.0f, window_height / 2.0f - BALL_HEIGHT / 2.0f, BALL_WIDTH, BALL_HEIGHT, BALL_COLOR);
 	ball.velocity.y = 300.0f;
+	ball.velocity.x = 300.0f;
 
 	walls.clear();
 	walls.push_back(gen_object(WALL_WIDTH, WALL_WIDTH, WALL_WIDTH, window_height - 2.0f * WALL_WIDTH, 0xffffffff));
@@ -116,6 +117,19 @@ bool intersects(const BoundingBox &a, const BoundingBox &b, vec2 &displacement)
 
 void update_paddle(float dt)
 {
+	//float a = -700.0f;
+	//float y0 = window_height - ball.bounds.position.y;
+	//float v0 = -ball.velocity.y;
+	//float t0 = (-v0 - sqrt(v0 * v0 - 2 * a * y0)) / a;
+	//float t1 = (-v0 + sqrt(v0 * v0 - 2 * a * y0)) / a;
+	//float t = max(t0, t1);
+	//float x = ball.bounds.position.x + ball.velocity.x * t;
+	//x = clamp(x, WALL_WIDTH, window_width - WALL_WIDTH);
+	//float K = 1.5f;
+	//float u = K * (x - paddle.bounds.position.x);
+	//u = min(u, 500.0f);
+	//paddle.velocity.x = u;
+
 	if (is_key_down(SDLK_LEFT))
 		paddle.velocity.x -= 1600.0f * dt;
 	else if (is_key_down(SDLK_RIGHT))
@@ -123,12 +137,30 @@ void update_paddle(float dt)
 	else
 		paddle.velocity.x -= 10.0f * paddle.velocity.x * dt;
 
+	vec2 displacement;
+	for (int i = 0; i < walls.size(); i++)
+	{
+		if (!intersects(paddle.bounds, walls[i].bounds, displacement))
+			continue;
+		paddle.bounds.position += displacement;
+		paddle.velocity.x = abs(paddle.velocity.x) * displacement.x / abs(displacement.x);
+	}
+
+	for (int i = 0; i < bricks.size(); i++)
+	{
+		if (!intersects(paddle.bounds, bricks[i].bounds, displacement))
+			continue;
+		paddle.bounds.position += displacement;
+		APP_LOG << displacement.x << ", " << displacement.y << '\n';
+		paddle.velocity += glm::length(paddle.velocity) * displacement / (glm::length(displacement) + 0.001f);
+	}
+
 	paddle.bounds.position += paddle.velocity * dt;
 }
 
 void update_ball(float dt)
 {
-	//ball.velocity.y += 700.0f * dt;
+	ball.velocity.y += 700.0f * dt;
 	vec2 displacement;
 	if (intersects(ball.bounds, paddle.bounds, displacement))
 	{

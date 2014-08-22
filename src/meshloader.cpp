@@ -80,6 +80,7 @@ bool load_mesh_indexed(Mesh &mesh, string path)
 	uint32 progress = 0;
 	uint32 filesize = file.size();
 	APP_LOG << "Processing |";
+	int line_n = 0;
 	while (std::getline(file_stream, line))
 	{
 		stringstream ss(line);
@@ -101,7 +102,7 @@ bool load_mesh_indexed(Mesh &mesh, string path)
 		}
 		else if (word == "f")
 		{
-			vector<string> points = split<string>(line, ' ');
+			vector<string> points = split<string>(line);
 			if (points.size() == 5)
 			{
 				process_vertex(points[1], unique_vertices, positions, texels, normals, vertices, indices, num_vertices);

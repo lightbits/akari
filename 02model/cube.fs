@@ -34,6 +34,6 @@ void main()
 	float u = texelLine(vTexel.x, r);
 	float v = texelLine(vTexel.y, r);
 	float s = u + v - u * v;
-	outColor.rgb *= 1.0 - s;
+	outColor.rgb *= 1.0 - s * 0.0001;
 	outColor.rgb = sqrt(outColor.rgb);
 }

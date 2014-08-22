@@ -5,23 +5,17 @@ FSAA samples: 4
 Depth bits: 24
 Stencil bits: 8
 RGBA bits: 8 8 8 8
-Vendor: ATI Technologies Inc.
-Renderer: AMD Radeon HD 6800 Series
-GL ver.: 3.1.12874 Compatibility Profile Context 14.100.0.0
-GLSL ver.: 4.30
+Vendor: Intel
+Renderer: Intel(R) HD Graphics 3000
+GL ver.: 3.1.0 - Build 9.17.10.2932
+GLSL ver.: 1.40 - Intel Build 9.17.10.2932
+5
 Opened file ../data/shaders/font.vs
 Opened file ../data/shaders/font.fs
 Opened file ./cube.vs
 Opened file ./cube.fs
 Opened file ./sponza.vs
 Opened file ./sponza.fs
-Opened file ../data/models/teapot.obj
-Processing |-------------------|
-Loaded model teapot.obj
-530 vertices
-800 texels
-530 normals
-25344 bytes in total
 Opened file ../data/models/cube.obj
 Processing |-----------------|
 Loaded model cube.obj
@@ -29,3 +23,17 @@ Loaded model cube.obj
 14 texels
 8 normals
 896 bytes in total
+Opened file ../data/models/cube.obj
+Processing |-----------------|
+Loaded model cube.obj
+8 vertices
+14 texels
+8 normals
+896 bytes in total
+Opened file ../data/models/body.obj
+Processing |-------------------|
+Loaded model body.obj
+7631 vertices
+0 texels
+7631 normals
+183144 bytes in total

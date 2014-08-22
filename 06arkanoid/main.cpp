@@ -158,9 +158,8 @@ int main(int argc, char **argv)
 
 	bool running = true;
 	double frame_time = 0.0;
-	double target_frame_time = 1.0 / 120.0;
 	double accumulator = 0.0;
-	double timestep = 1.0 / 120.0;
+	double timestep = 1.0 / 240.0;
 	while (running)
 	{
 		double frame_begin = get_elapsed_time();
@@ -179,9 +178,8 @@ int main(int argc, char **argv)
 		if (check_gl_errors())
 			running = false;
 
-		if (frame_time < target_frame_time)
-			SDL_Delay(uint32(1000.0 * (target_frame_time - frame_time)));
 		frame_time = get_elapsed_time() - frame_begin;
+		APP_LOG << frame_time << "\t\t\r";
 	}
 
 	SDL_GL_DeleteContext(gl_context);
