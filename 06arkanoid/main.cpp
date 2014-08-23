@@ -106,8 +106,8 @@ int main(int argc, char **argv)
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
+	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 0);
+	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 0);
 
 	SDL_Window *window = SDL_CreateWindow(
 		"Sample Application",
@@ -164,6 +164,7 @@ int main(int argc, char **argv)
 	{
 		double frame_begin = get_elapsed_time();
 		accumulator += frame_time;
+		handle_events(running, window);
 		while (accumulator >= timestep)
 		{
 			update_game(timestep);
@@ -171,15 +172,12 @@ int main(int argc, char **argv)
 		}
 
 		render_game(frame_time);
-		handle_events(running, window);
 		SDL_GL_SwapWindow(window);
-		frame_time = get_elapsed_time() - frame_begin;
 
 		if (check_gl_errors())
 			running = false;
 
 		frame_time = get_elapsed_time() - frame_begin;
-		APP_LOG << frame_time << "\t\t\r";
 	}
 
 	SDL_GL_DeleteContext(gl_context);

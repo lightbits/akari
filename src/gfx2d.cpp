@@ -1,6 +1,7 @@
 #include "gfx2d.h"
 #include "opengl.h"
 #include "gfx.h"
+#include "log.h"
 #define GLSL(src) "#version 150 core\n" #src
 
 static const char *VERTEX_SHADER_SRC = GLSL(
@@ -54,7 +55,8 @@ void gfx2d::init(int width, int height)
 	uint8 blank[] = { 255, 255, 255, 255 };
 	vertex_buffer = gen_buffer(GL_ARRAY_BUFFER, MAX_VERTICES * VERTEX_SIZE, NULL, GL_DYNAMIC_DRAW);
 	blank_texture = gen_texture(blank, 1, 1, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
-	SDL_assert(shader.load_from_src(VERTEX_SHADER_SRC, FRAGMENT_SHADER_SRC));
+	bool status = shader.load_from_src(VERTEX_SHADER_SRC, FRAGMENT_SHADER_SRC);
+	ASSERT(status, "Failed to load default 2D shader");
 	mat_ortho = ortho(0.0f, float(width), float(height), 0.0f, 0.0f, 1.0f);
 	draw_cmds.clear();
 }
@@ -111,7 +113,7 @@ void gfx2d::begin()
 	attribfv("texel", 2, 8, 2);
 	attribfv("color", 4, 8, 4);
 	uniform("projection", mat_ortho);
-	uniform("tex", 0);
+	//uniform("tex", 0);
 }
 
 void gfx2d::end()
