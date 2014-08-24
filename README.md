@@ -5,6 +5,8 @@ A 3D graphics library full of helpful functions and things.
 ### done ###
 
 * Model loading
+* ImGui    
+	[ocornut's library](https://github.com/ocornut/imgui)
 
 ### todo ###
 
@@ -52,8 +54,6 @@ A 3D graphics library full of helpful functions and things.
 	[gpu gems](http://http.developer.nvidia.com/GPUGems/gpugems_ch39.html)  
 * 3D fluid sim  
 	[an implementaion](http://scrawkblog.com/2014/01/09/gpu-gems-to-unity-3d-fluid-simulation/)
-* imgui  
-	https://github.com/ocornut/imgui
 	
 [stuff](http://advancedgraphics.marries.nl/)
 [more stuff](http://oglplus.org/oglplus/html/examples.html)

@@ -20,7 +20,7 @@ void free_game()
 
 void init_game()
 {
-	
+
 }
 
 void update_game(float dt)

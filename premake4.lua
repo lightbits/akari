@@ -25,6 +25,7 @@ solution "kyoko"
 	include "05gfx2d"
 	include "06arkanoid"
 	include "07gui"
+	include "08dithering"
 	
 	-- Specify the base graphics library
 	project "kyoko"

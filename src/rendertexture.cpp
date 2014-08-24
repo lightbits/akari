@@ -10,10 +10,11 @@ uint gen_renderbuffer(int width, int height, GLenum format)
 	return rdb;
 }
 
-RenderTexture gen_rendertexture(int width, int height, GLenum internal_format)
+RenderTexture gen_rendertexture(int width, int height, GLenum internal_format,
+	GLenum min_filter, GLenum mag_filter)
 {
 	RenderTexture rt;
-	rt.color = gen_texture(NULL, width, height, internal_format, GL_RGBA, GL_UNSIGNED_BYTE);
+	rt.color = gen_texture(NULL, width, height, internal_format, GL_RGBA, GL_UNSIGNED_BYTE, min_filter, mag_filter);
 	rt.depth = gen_renderbuffer(width, height, GL_DEPTH_COMPONENT);
 	rt.width = width;
 	rt.height = height;
