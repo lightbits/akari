@@ -4,6 +4,7 @@
 #include "shader.h"
 #include "log.h"
 #include "game.h"
+#include "sdlgui.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -57,6 +58,7 @@ void handle_events(bool &running, SDL_Window *window)
 	SDL_Event event;
 	while (SDL_PollEvent(&event))
 	{
+		gui::poll_events(event);
 		switch (event.type)
 		{
 		case SDL_KEYUP:
@@ -100,7 +102,7 @@ int main(int argc, char **argv)
 		return EXIT_FAILURE;
 	}
 
-	int window_width = 480;
+	int window_width = 640;
 	int window_height = 480;
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
@@ -114,7 +116,7 @@ int main(int argc, char **argv)
 		SDL_WINDOWPOS_CENTERED,
 		SDL_WINDOWPOS_CENTERED,
 		window_width, window_height,
-		SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_BORDERLESS);
+		SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
 
 	if (window == NULL)
 	{
@@ -125,7 +127,6 @@ int main(int argc, char **argv)
 
 	SDL_GLContext gl_context = SDL_GL_CreateContext(window);
 	SDL_GL_SetSwapInterval(1); // Wait for vertical refresh
-	//SDL_ShowCursor(0);
 
 	glewExperimental = true;
 	GLenum glew_error = glewInit();
@@ -156,30 +157,31 @@ int main(int argc, char **argv)
 	glBindVertexArray(vao);
 	glViewport(0, 0, window_width, window_height);
 
-	bool running = true;
+	gui::init(window_width, window_height);
+
 	double frame_time = 0.0;
-	double accumulator = 0.0;
-	double timestep = 1.0 / 240.0;
+	bool running = true;
 	while (running)
 	{
 		double frame_begin = get_elapsed_time();
-		accumulator += frame_time;
 		handle_events(running, window);
-		while (accumulator >= timestep)
-		{
-			update_game(timestep);
-			accumulator -= timestep;
-		}
-
+		gui::update(frame_time);
+		update_game(frame_time);
 		render_game(frame_time);
 		SDL_GL_SwapWindow(window);
+		frame_time = get_elapsed_time() - frame_begin;
 
 		if (check_gl_errors())
 			running = false;
 
-		frame_time = get_elapsed_time() - frame_begin;
+		if (frame_time < 1.0 / 60.0)
+		{
+			sleep(1.0 / 60.0 - frame_time);
+			frame_time = get_elapsed_time() - frame_begin;
+		}
 	}
 
+	gui::dispose();
 	SDL_GL_DeleteContext(gl_context);
 	SDL_DestroyWindow(window);
 	SDL_Quit();

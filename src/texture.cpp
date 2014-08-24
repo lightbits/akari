@@ -6,7 +6,8 @@
 
 bool load_texture_from_file(
 	uint &texture, const char *filename, 
-	GLenum min_filter, GLenum mag_filter, GLenum wrap_s, GLenum wrap_t)
+	GLenum min_filter, GLenum mag_filter, GLenum wrap_s, GLenum wrap_t,
+	bool flip_y)
 {
 	int width, height, channels;
 	uint8 *pixels = stbi_load(filename, &width, &height, &channels, 4);
@@ -17,19 +18,21 @@ bool load_texture_from_file(
 		return false;
 	}
 
-	// Flip y
-	for (int y = 0; y < height / 2; y++)
-	for (int x = 0; x < width * 4; x++)
-		std::swap(pixels[y * width * 4 + x], pixels[(height - 1 - y) * width * 4 + x]);
+	if (flip_y)
+	{
+		for (int y = 0; y < height / 2; y++)
+		for (int x = 0; x < width * 4; x++)
+			std::swap(pixels[y * width * 4 + x], pixels[(height - 1 - y) * width * 4 + x]);
+	}
 
 	texture = gen_texture(pixels, width, height, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, min_filter, mag_filter, wrap_s, wrap_t);
 	stbi_image_free(pixels);
 	return true;
 }
 
-bool load_texture_from_mem(uint &texture, const void *png_data, int png_size, 
-						   GLenum internal_fmt, GLenum data_fmt, GLenum data_type,
-						   GLenum min_filter, GLenum mag_filter, GLenum wrap_s, GLenum wrap_t)
+bool load_texture_from_mem(uint &texture, const void *png_data, int png_size,
+						   GLenum min_filter, GLenum mag_filter, GLenum wrap_s, GLenum wrap_t,
+						   bool flip_y)
 {
 	int width, height, channels;
 	uint8 *pixels = stbi_load_from_memory((const unsigned char*)png_data, png_size, &width, &height, &channels, 4);
@@ -40,10 +43,12 @@ bool load_texture_from_mem(uint &texture, const void *png_data, int png_size,
 		return false;
 	}
 
-	// Flip y
-	for (int y = 0; y < height / 2; y++)
-	for (int x = 0; x < width * 4; x++)
-		std::swap(pixels[y * width * 4 + x], pixels[(height - 1 - y) * width * 4 + x]);
+	if (flip_y)
+	{
+		for (int y = 0; y < height / 2; y++)
+		for (int x = 0; x < width * 4; x++)
+			std::swap(pixels[y * width * 4 + x], pixels[(height - 1 - y) * width * 4 + x]);
+	}
 
 	texture = gen_texture(pixels, width, height, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, min_filter, mag_filter, wrap_s, wrap_t);
 	stbi_image_free(pixels);

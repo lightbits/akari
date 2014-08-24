@@ -20,6 +20,7 @@ public:
 	int get_uniform_location(string name);
 	int get_attribute_location(string name);
 
+	void set_attribv(string name, GLenum type, int num_components, int byte_stride, int byte_offset, bool normalized = false);
 	void set_attribfv(string name, int num_components, int stride, int offset);
 	void unset_attrib(string name);
 

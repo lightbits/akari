@@ -16,5 +16,6 @@
 #include "camera.h"
 #include "input.h"
 #include "texture.h"
+#include "rendertexture.h"
 #include "gfx2d.h"
 #endif

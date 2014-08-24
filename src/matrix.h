@@ -88,6 +88,13 @@ static mat4 scale(float x, float y, float z)
 	return m;
 }
 
+static mat4 scale(const vec3 &v)
+{
+	mat4 m(1.0f);
+	m[0][0] = v.x; m[1][1] = v.y; m[2][2] = v.z;
+	return m;
+}
+
 static mat4 scale(float s)
 {
 	return scale(s, s, s);

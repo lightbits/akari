@@ -5,7 +5,6 @@
 
 bool read_int(const char **s, int &i)
 {
-	char c = **s;
 	while ((**s) != '\0' && !isdigit(**s))
 		(*s)++;
 	if (**s == '\0')
@@ -80,7 +79,6 @@ bool load_mesh_indexed(Mesh &mesh, string path)
 	uint32 progress = 0;
 	uint32 filesize = file.size();
 	APP_LOG << "Processing |";
-	int line_n = 0;
 	while (std::getline(file_stream, line))
 	{
 		stringstream ss(line);

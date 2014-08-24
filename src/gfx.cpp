@@ -79,16 +79,6 @@ void blend_mode(bool enabled, GLenum src, GLenum dest, GLenum func)
 	}
 }
 
-void array_buffer(uint vertex_buffer)
-{
-	glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
-}
-
-void element_buffer(uint index_buffer)
-{
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer);
-}
-
 vec4 to_rgba(uint32 hex)
 {
 	return vec4(
@@ -141,6 +131,11 @@ void attribfv_enable()
 void attribfv(string name, int num_components, int stride, int offset)
 { 
 	current.set_attribfv(name, num_components, stride, offset); 
+}
+
+void attribv(string name, GLenum type, int num_components, int byte_stride, int byte_offset, bool normalized)
+{
+	current.set_attribv(name, type, num_components, byte_stride, byte_offset, normalized);
 }
 
 void unset_attrib(string name)

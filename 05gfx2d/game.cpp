@@ -26,6 +26,22 @@ uint
 Font
 	font_debug;
 
+struct Star
+{
+	uint color;
+	vec2 position;
+	vec2 velocity;
+};
+
+vector<Star> stars;
+int max_num_stars = 128;
+int num_star_colors = 3;
+uint star_colors[] = {
+	0xE5E7CAFF,
+	0xB4B4AAFF,
+	0x6F6F8FFF
+};
+
 bool load_game(int width, int height)
 {
 	window_width = width;
@@ -38,6 +54,17 @@ bool load_game(int width, int height)
 		return false;
 
 	gfx2d::init(width, height);
+
+	for (int i = 0; i < max_num_stars; i++)
+	{
+		Star star;
+		int layer = i % num_star_colors;
+		star.color = star_colors[layer];
+		star.position = vec2(frand(), frand()) * vec2(window_width, window_height);
+		star.velocity = vec2(-250.0f + layer * 48.0f + 24.0f * frand(), 0.0f);
+		stars.push_back(star);
+	}
+
 	return true;
 }
 
@@ -53,7 +80,14 @@ void init_game()
 
 void update_game(float dt)
 {
-	
+	for (int i = 0; i < stars.size(); i++)
+	{
+		Star &star = stars[i];
+		if (star.position.x < 0.0f)
+			star.position = vec2(window_width + 5.0f, frand() * window_height);
+		else
+			star.position += star.velocity * dt;
+	}
 }
 
 void draw_textbox(float x, float y, float width, float height)
@@ -94,15 +128,20 @@ void render_game(float dt)
 	using namespace gfx2d;
 	blend_mode(true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_FUNC_ADD);
 	glLineWidth(1.0f);
-	clearc(0x4E4B61FF);
+	clearc(0x001333ff);
+	//clearc(0x4E4B61FF);
 	begin();
-	draw_textbox(10.0f, 60.0f, 64.0f, 14.0f);
-	draw_panel(100.0f, 160.0f, 200.0f, 100.0f);
-	draw_panel(300.0f, 160.0f, 100.0f, 100.0f);
-	tex_rectangle(101.0f, 161.0f, 198.0f, 98.0f, tex_test);
 
-	use_font(font_debug);
-	draw_string(5.0f, 5.0f, "Hello World!");
+	for (int i = 0; i < stars.size(); i++)
+		fill_rectangle(stars[i].position - vec2(2.0f), vec2(4.0f), stars[i].color);
+
+	//draw_textbox(10.0f, 60.0f, 64.0f, 14.0f);
+	//draw_panel(100.0f, 160.0f, 200.0f, 100.0f);
+	//draw_panel(300.0f, 160.0f, 100.0f, 100.0f);
+	//tex_rectangle(101.0f, 161.0f, 198.0f, 98.0f, tex_test);
+
+	//use_font(font_debug);
+	//draw_string(5.0f, 5.0f, "Hello World!");
 	end();
 }
 

@@ -140,6 +140,20 @@ GLint Shader::get_attribute_location(string name)
 	}
 }
 
+void Shader::set_attribv(string name, GLenum type, int num_components, int byte_stride, int byte_offset, bool normalized)
+{
+	GLint loc = get_attribute_location(name);
+	glEnableVertexAttribArray(loc);
+	glVertexAttribPointer(
+		loc, 
+		num_components, // in the attribute,
+		type,
+		normalized,
+		byte_stride, // the attribs are seperated by this much,
+		(void*)(byte_offset) // beginning at this offset in the array.
+		);
+}
+
 void Shader::set_attribfv(string name, GLsizei num_components, 
 						  GLsizei stride, GLsizei offset)
 {

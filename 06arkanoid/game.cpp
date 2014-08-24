@@ -22,8 +22,13 @@ static const char *SHADER_3D_FS = GLSL(
 	out vec4 outColor;
 	void main()
 	{
+		vec3 L = normalize(vec3(2.0, 8.0, 1.0));
 		vec3 N = normalize(vNormal);
-		outColor.rgb = 0.001 * (N * 0.5 + vec3(0.5)) + color.rgb;
+		//vec3 ambient = vec3(0.4, 0.55, 0.7);
+		//vec3 ambient = vec3(0.2, 0.25, 0.3);
+		vec3 ambient = 2.0 * vec3(0.3, 0.25, 0.2);
+		float NdotL = max(dot(N, L), 0.0);
+		outColor.rgb = NdotL * color.rgb + (1.0 - NdotL) * ambient * color.rgb;
 		outColor.a = color.a;
 	}
 );
@@ -48,6 +53,7 @@ struct Object
 Object paddle;
 Object ball;
 vector<Object> objects;
+int score;
 
 int window_width;
 int window_height;
@@ -118,8 +124,9 @@ void init_game()
 	objects.clear();
 	objects.push_back(gen_object(-64.0f, 0.0f, 64.0f, window_height, WALL_COLOR)); // Left
 	objects.push_back(gen_object(window_width, 0.0f, 64.0f, window_height, WALL_COLOR)); // Right
-	objects.push_back(gen_object(0.0f, -64.0f, window_width, 64.0f, WALL_COLOR)); // Top
-	objects.push_back(gen_object(0.0f, window_height, window_width, 64.0f, WALL_COLOR)); // Bottom
+	objects.push_back(gen_object(-64.0f, -64.0f, window_width + 128.0f, 64.0f, WALL_COLOR)); // Top
+	objects.push_back(gen_object(-64.0f, window_height, window_width + 128.0f, 64.0f, WALL_COLOR)); // Bottom
+	score = 0;
 
 	float pad = 12.0f;
 	int rows = 10;
@@ -233,7 +240,7 @@ void update_ball(float dt)
 		vec2 reflect_axis = glm::normalize(displacement);
 		vec2 new_direction = glm::normalize(glm::reflect(ball.velocity, reflect_axis) + vec2(sign * mag, 0.0f));
 		ball.velocity = glm::length(ball.velocity) * new_direction;
-		ball.velocity.y = ball.velocity.y + 0.4f * paddle.velocity.y;
+		ball.velocity.y += 0.4f * paddle.velocity.y * dt;
 	}
 
 	for (int i = 0; i < objects.size(); i++)
@@ -254,7 +261,10 @@ void update_ball(float dt)
 		{
 			obj.hitpoints -= 1;
 			if (obj.hitpoints <= 0)
+			{
 				obj.anim_timer = 1.0f;
+				score++;
+			}
 		}
 	}
 
@@ -309,6 +319,50 @@ void render_object(const Object &object)
 	rectangle(object.bounds.position, object.bounds.size, object.color);
 }
 
+void render_symbol_3D(int n, vec2 position, uint color)
+{
+	const int nx = 3;
+	const int ny = 5;
+	string grid;
+	if (n == 0)		 grid = "#### ## ## ####";
+	else if (n == 1) grid = "##  #  #  # ###";
+	else if (n == 2) grid = "###  #####  ###";
+	else if (n == 3) grid = "###  ####  ####";
+	else if (n == 4) grid = "# ## ####  #  #";
+	else if (n == 5) grid = "####  ###  ####";
+	else if (n == 6) grid = "####  #### ####";
+	else if (n == 7) grid = "###  #  # #  # ";
+	else if (n == 8) grid = "#### ##### ####";
+	else if (n == 9) grid = "#### ####  #  #";
+	
+	const vec3 size = vec3(0.05f);
+	for (int y = 0; y < ny; y++)
+	{
+		for (int x = 0; x < nx; x++)
+		{
+			if (grid[y * nx + x] == ' ')
+				continue;
+			float px = -1.0f + 2.0f * position.x / window_width + x * size.x;
+			float py = 0.2f + (ny - y - 1) * size.y;
+			float pz = -1.0f + 2.0f * position.y / window_height;
+			uniform("model", translate(px, py, pz) * scale(size));
+			uniform("color", to_rgba(color));
+			glDrawElements(GL_TRIANGLES, mesh_cube.num_indices, GL_UNSIGNED_INT, 0);
+		}
+	}
+}
+
+void render_number_3D(int n, vec2 position, uint color)
+{
+	int i = 0;
+	do
+	{
+		render_symbol_3D(n % 10, position - vec2(i * 60.0f, 0.0f), color);
+		i++;
+		n = n / 10;
+	} while(n > 0);
+}
+
 void render_object_3D(const Object &object)
 {
 	vec2 res = vec2(window_width, window_height);
@@ -329,7 +383,7 @@ void render_object_3D(const Object &object)
 void render_visualizers(float dt)
 {
 	float norm_v = glm::length(ball.velocity) / glm::length(MAX_BALL_SPEED);
-	Object speed_bar = gen_object(0.0f, -128.0f, window_width * norm_v, 16.0f, BALL_COLOR);
+	Object speed_bar = gen_object(0.0f, -128.0f, window_width * norm_v, 16.0f, WALL_COLOR);
 	render_object_3D(speed_bar);
 }
 
@@ -342,8 +396,8 @@ void render_3D(float dt)
 	float rotx = 0.07f * ball_y;
 	float zoom = -0.1f * cos(ball_x * PI / 2.0f);
 	
-	mat4 mat_projection = perspective(PI / 4.0f, window_width / float(window_height), 0.5f, 5.0f);
-	mat4 mat_view = translate(0.0f, 0.0f, -2.5f + zoom) * rotateX(-0.8f + rotx) * rotateY(roty);
+	mat4 mat_projection = perspective(PI / 3.0f + zoom, window_width / float(window_height), 0.5f, 5.0f);
+	mat4 mat_view = translate(0.0f, 0.0f, -2.5f) * rotateX(-0.8f + rotx) * rotateY(roty);
 	use_shader(shader_3D);
 	depth_write(true);
 	depth_test(true, GL_LEQUAL);
@@ -373,6 +427,8 @@ void render_3D(float dt)
 	render_object_3D(paddle);
 	render_object_3D(ball);
 	render_visualizers(dt);
+
+	render_number_3D(score, vec2(200.0f, -128.0f), WALL_COLOR);
 }
 
 void render_game(float dt)
