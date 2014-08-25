@@ -1,4 +1,4 @@
-solution "kyoko"
+solution "akari"
 	configurations {"Debug", "Release"}
 
 	configuration "windows"
@@ -28,7 +28,7 @@ solution "kyoko"
 	include "08dithering"
 	
 	-- Specify the base graphics library
-	project "kyoko"
+	project "akari"
 		kind "StaticLib"
 		language "c++"
 		files {"./src/**.cpp", "./src/**.cc", "./src/**.h"}

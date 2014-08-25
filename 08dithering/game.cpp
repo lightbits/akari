@@ -28,10 +28,10 @@ bool load_game(int width, int height)
 		!shader_dither.load_from_file("./dither.vs", "./dither.fs"))
 		return false;
 
-	if (!load_mesh_indexed(mesh_teapot, "../../../resources/models/crytek-sponza/sponza.obj"))
-		return false;
-	//if (!load_mesh_indexed(mesh_teapot, "../data/models/body.obj"))
+	//if (!load_mesh_indexed(mesh_teapot, "../../../resources/models/crytek-sponza/sponza.obj"))
 	//	return false;
+	if (!load_mesh_indexed(mesh_teapot, "../data/models/teapot.obj"))
+		return false;
 
 	uint8 dither_pattern[] = {
 		255, 0, 255, 0
@@ -97,7 +97,7 @@ void render_game(float dt)
 	use_shader(shader_default);
 	uniform("projection", mat_projection);
 	uniform("view", mat_view);
-	uniform("model", scale(0.01f));
+	uniform("model", scale(0.07f));
 	uniform("lightPos", vec3(0.8, 4.0, 0.8));
 	uniform("palette", vec3(143.0, 199.0, 132.0) / 255.0f);
 	uniform("texDither", 0);

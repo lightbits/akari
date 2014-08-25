@@ -1,4 +1,4 @@
-### kyoko ###
+### akari ###
 
 A 3D graphics library full of helpful functions and things.
 

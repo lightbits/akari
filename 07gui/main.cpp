@@ -158,7 +158,7 @@ int main(int argc, char **argv)
 	glBindVertexArray(vao);
 	glViewport(0, 0, window_width, window_height);
 
-	double frame_time = 0.0;
+	double frame_time = 1.0 / 60.0;
 	bool running = true;
 	while (running)
 	{

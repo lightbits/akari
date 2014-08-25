@@ -5211,12 +5211,8 @@ void ImBitmapFont::RenderText(float size, ImVec2 pos, ImU32 col, const ImVec4& c
     const float outline = (float)Info->Outline;
 
     // Align to be pixel perfect
-    //pos.x = (float)(int)pos.x + 0.5f;
-    //pos.y = (float)(int)pos.y + 0.5f;
-
-	// Makes text pixel perfect with anti-aliasing on my machine
-	pos.x = pos.x < 0 ? (float)(int)(pos.x - 0.5f) : (float)(int)(pos.x + 0.5f);
-	pos.y = pos.y < 0 ? (float)(int)(pos.y - 0.5f) : (float)(int)(pos.y + 0.5f);
+    pos.x = (float)(int)(pos.x + 0.5f);
+    pos.y = (float)(int)(pos.y + 0.5f);
 
     const ImVec4 clip_rect = clip_rect_ref;
 
