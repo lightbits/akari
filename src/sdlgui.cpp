@@ -87,7 +87,7 @@ void gui::init(int window_width, int window_height)
 	ImGuiIO &io = ImGui::GetIO();
 	io.DisplaySize = ImVec2(window_width, window_height);
 	io.DeltaTime = 1.0f / 60.0f;
-	io.PixelCenterOffset = 0.375f; // Magic value, 0.5 does not work for my AMD GPU
+	io.PixelCenterOffset = 0.0f;
 	io.RenderDrawListsFn = render_lists;
 
 	// Map special purpose keys to the corresponding SDL keys

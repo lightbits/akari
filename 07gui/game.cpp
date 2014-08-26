@@ -33,8 +33,12 @@ void render_game(float dt)
 	clear(0xcc9999ff, 1.0f);
 	ImGui::NewFrame();
 	ImGui::ShowTestWindow();
-	ImGui::Begin("Framerate");
-	ImGui::Text("%.2f", dt * 1000.0f);
+
+	static float lightColor[4];
+	static float attenuation;
+	ImGui::Begin("Diffuse Shader");
+	ImGui::ColorEdit4("lightColor", lightColor);
+	ImGui::SliderFloat("attenuation", &attenuation, 1.0f, 16.0f);
 	ImGui::End();
 	ImGui::Render();
 }

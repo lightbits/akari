@@ -4791,6 +4791,10 @@ void ImDrawList::ReserveVertices(unsigned int vtx_count)
 void ImDrawList::AddVtx(const ImVec2& pos, ImU32 col)
 {
     vtx_write->pos = pos;
+	vtx_write->pos.x = (float)(int)vtx_write->pos.x;
+	vtx_write->pos.y = (float)(int)vtx_write->pos.y;
+	//vtx_write->pos.x += GImGui.IO.PixelCenterOffset;
+	//vtx_write->pos.y += GImGui.IO.PixelCenterOffset;
     vtx_write->col = col;
     vtx_write->uv = IMGUI_FONT_TEX_UV_FOR_WHITE;
     vtx_write++;
@@ -5211,8 +5215,8 @@ void ImBitmapFont::RenderText(float size, ImVec2 pos, ImU32 col, const ImVec4& c
     const float outline = (float)Info->Outline;
 
     // Align to be pixel perfect
-    pos.x = (float)(int)(pos.x + 0.5f);
-    pos.y = (float)(int)(pos.y + 0.5f);
+    pos.x = (float)(int)pos.x;
+    pos.y = (float)(int)pos.y;
 
     const ImVec4 clip_rect = clip_rect_ref;
 
