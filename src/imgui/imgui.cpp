@@ -4791,10 +4791,8 @@ void ImDrawList::ReserveVertices(unsigned int vtx_count)
 void ImDrawList::AddVtx(const ImVec2& pos, ImU32 col)
 {
     vtx_write->pos = pos;
-	vtx_write->pos.x = (float)(int)vtx_write->pos.x;
-	vtx_write->pos.y = (float)(int)vtx_write->pos.y;
-	//vtx_write->pos.x += GImGui.IO.PixelCenterOffset;
-	//vtx_write->pos.y += GImGui.IO.PixelCenterOffset;
+	vtx_write->pos.x = (float)(int)(vtx_write->pos.x + 0.375f);
+	vtx_write->pos.y = (float)(int)(vtx_write->pos.y + 0.375f);
     vtx_write->col = col;
     vtx_write->uv = IMGUI_FONT_TEX_UV_FOR_WHITE;
     vtx_write++;

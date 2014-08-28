@@ -19,7 +19,7 @@ static const char *SHADER_GUI_VS = GLSL(
 	{
 		vTexel = texel;
 		vColor = color;
-		gl_Position = projection * vec4(position, 0.0, 1.0);
+		gl_Position = projection * vec4(round(position), 0.0, 1.0);
 	}
 );
 
