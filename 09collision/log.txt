@@ -1,7 +1,7 @@
 Debug context: no
 HW accelerated: yes
 Double buffered: yes
-FSAA samples: 4
+FSAA samples: 0
 Depth bits: 24
 Stencil bits: 8
 RGBA bits: 8 8 8 8

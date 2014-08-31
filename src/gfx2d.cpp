@@ -113,7 +113,7 @@ void gfx2d::begin()
 	attribfv("texel", 2, 8, 2);
 	attribfv("color", 4, 8, 4);
 	uniform("projection", mat_ortho);
-	//uniform("tex", 0);
+	uniform("tex", 0);
 }
 
 void gfx2d::end()
@@ -231,6 +231,8 @@ void gfx2d::draw_string(float x0, float y0, const string &text, uint color, bool
 		return;
 
 	SDL_assert(current_font != nullptr);
+	if (current_font == nullptr)
+		return;
 
 	if (centered)
 	{
