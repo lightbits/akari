@@ -10,6 +10,8 @@ using glm::ortho;
 using glm::round;
 using glm::max;
 using glm::min;
+using glm::normalize;
+using glm::length;
 
 typedef glm::mat2 mat2;
 typedef glm::mat3 mat3;

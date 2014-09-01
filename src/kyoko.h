@@ -18,4 +18,5 @@
 #include "texture.h"
 #include "rendertexture.h"
 #include "gfx2d.h"
+#include "text.h"
 #endif

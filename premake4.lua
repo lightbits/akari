@@ -26,6 +26,7 @@ solution "akari"
 	include "06arkanoid"
 	include "07gui"
 	include "08dithering"
+	include "09collision"
 	
 	-- Specify the base graphics library
 	project "akari"
