@@ -106,6 +106,8 @@ void flush()
 
 void gfx2d::begin()
 {
+	// if (!initialized)
+
 	glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
 	glActiveTexture(GL_TEXTURE0);
 	use_shader(shader);
@@ -118,6 +120,8 @@ void gfx2d::begin()
 
 void gfx2d::end()
 {
+	// if (!in_begin_end_pair)
+
 	flush();
 	unset_attrib("position");
 	unset_attrib("texel");

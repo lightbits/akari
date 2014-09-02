@@ -10,6 +10,10 @@ A 3D graphics library full of helpful functions and things.
 
 ### todo ###
 
+* Ingame shader editor  
+	* Using ImGUI  
+	* Reload shader on the fly, compilation errors  
+	* Parse shader, detect // color 0.0 1.0 and create color slider in GUI
 * xBR scaler  
 	[description of the algorithm](http://board.byuu.org/viewtopic.php?f=10&t=2248)  
 	[implementation](http://sourceforge.net/p/paintown/code/7842/tree/trunk/src/util/graphics/sdl/xbr.cpp)  

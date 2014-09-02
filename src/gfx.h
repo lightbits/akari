@@ -13,7 +13,8 @@ void depth_test(bool enabled, GLenum func = GL_LEQUAL);
 void depth_write(bool enabled);
 void blend_mode(bool enabled, GLenum src = GL_ONE, GLenum dest = GL_ZERO, GLenum func = GL_FUNC_ADD);
 
-vec4 to_rgba(unsigned int hex);
+vec4 to_rgba(uint32 hex);
+uint32 to_hex(vec4 rgba);
 float to_rad(float degrees);
 
 void use_shader(Shader shader);

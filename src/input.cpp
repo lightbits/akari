@@ -19,7 +19,7 @@ bool is_key_down(SDL_Keycode key)
 bool is_mouse_down(MouseButton button)
 {
 	uint32 state = SDL_GetMouseState(NULL, NULL);
-	return state & SDL_BUTTON(button);
+	return (state & SDL_BUTTON(button)) > 0;
 }
 
 vec2i get_mouse_pos()

@@ -1,9 +1,10 @@
 #version 150
 
-in vec3 vPosition;
+in vec4 vPosition;
 out float outDepth;
 
 void main()
 {
-	outDepth = length(vPosition);
+	float zNDC = vPosition.z / vPosition.w;
+	outDepth = 0.5 + zNDC * 0.5;
 }

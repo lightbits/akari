@@ -88,6 +88,16 @@ vec4 to_rgba(uint32 hex)
 		(hex & 0xff) / 255.0f);
 }
 
+uint32 to_hex(vec4 rgba)
+{
+	rgba *= 255.0f;
+	return 
+		uint8(rgba.x) << 24 |
+		uint8(rgba.y) << 16 |
+		uint8(rgba.z) << 8  |
+		uint8(rgba.w);
+}
+
 float to_rad(float degrees)
 {
 	return degrees * 3.14159265359f / 180.0f;

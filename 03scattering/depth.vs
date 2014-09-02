@@ -7,10 +7,10 @@ uniform mat4 projection;
 uniform mat4 view;
 uniform mat4 model;
 
-out vec3 vPosition;
+out vec4 vPosition;
 
 void main()
 {
-	vPosition = (view * model * vec4(position + 0.1 * normal, 1.0)).xyz;
-	gl_Position = projection * vec4(vPosition, 1.0);
+	gl_Position = projection * view * model * vec4(position + 0.1 * normal, 1.0);
+	vPosition = gl_Position;
 }
