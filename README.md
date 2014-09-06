@@ -10,6 +10,13 @@ A 3D graphics library full of helpful functions and things.
 
 ### todo ###
 
+* SSAO
+	* http://floored.com/blog/2013/ssao-screen-space-ambient-occlusion.html  
+	* http://developer.download.nvidia.com/SDK/10.5/direct3d/Source/ScreenSpaceAO/doc/ScreenSpaceAO.pdf  
+	* http://iquilezles.org/www/articles/ssao/ssao.htm  
+	* http://iquilezles.org/www/articles/sphereao/sphereao.htm  
+	* http://john-chapman-graphics.blogspot.no/2013/01/ssao-tutorial.html  
+	* http://blog.evoserv.at/index.php/2012/12/hemispherical-screen-space-ambient-occlusion-ssao-for-deferred-renderers-using-openglglsl/  
 * Ingame shader editor  
 	* Using ImGUI  
 	* Reload shader on the fly, compilation errors  
