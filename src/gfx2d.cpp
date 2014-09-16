@@ -170,6 +170,20 @@ void gfx2d::rectangle(float x, float y, float w, float h, uint color)
 	append_data(data, 5, GL_LINE_STRIP, blank_texture);
 }
 
+void gfx2d::fill_quad(vec2 v0, vec2 v1, vec2 v2, vec2 v3, uint color)
+{
+	vec4 v_color = to_rgba(color);
+	float data[] = {
+		v0.x, v0.y,	0.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w,
+		v1.x, v1.y,	0.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w,
+		v2.x, v2.y,	0.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w,
+		v2.x, v2.y,	0.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w,
+		v3.x, v3.y,	0.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w,
+		v0.x, v0.y,	0.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w
+	};
+	append_data(data, 6, GL_TRIANGLES, blank_texture);
+}
+
 void gfx2d::fill_rectangle(vec2 p, vec2 size, uint color) { fill_rectangle(p.x, p.y, size.x, size.y, color); }
 void gfx2d::fill_rectangle(float x, float y, float w, float h, uint color)
 {

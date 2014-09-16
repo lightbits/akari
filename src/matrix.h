@@ -12,6 +12,8 @@ using glm::max;
 using glm::min;
 using glm::normalize;
 using glm::length;
+using glm::cross;
+using glm::dot;
 
 typedef glm::mat2 mat2;
 typedef glm::mat3 mat3;

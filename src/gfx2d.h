@@ -16,6 +16,7 @@ namespace gfx2d
 	void rectangle(float x, float y, float w, float h, uint color);
 	void fill_rectangle(vec2 p, vec2 size, uint color);
 	void fill_rectangle(float x, float y, float w, float h, uint color);
+	void fill_quad(vec2 v0, vec2 v1, vec2 v2, vec2 v3, uint color);
 	void tex_rectangle(vec2 p, vec2 size, uint texture, uint color = 0xffffffff);
 	void tex_rectangle(float x, float y, float w, float h, uint texture, uint color = 0xffffffff);
 	void draw_string(vec2 p, const string &text, uint color = 0xffffffff, bool centered = false, float sx = 1.0f, float sy = 1.0f);

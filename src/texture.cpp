@@ -5,9 +5,8 @@
 #include "stb_image.h"
 
 bool load_texture_from_file(
-	uint &texture, const char *filename, 
-	GLenum min_filter, GLenum mag_filter, GLenum wrap_s, GLenum wrap_t,
-	bool flip_y)
+	uint &texture, const char *filename, bool flip_y,
+	GLenum min_filter, GLenum mag_filter, GLenum wrap_s, GLenum wrap_t)
 {
 	int width, height, channels;
 	uint8 *pixels = stbi_load(filename, &width, &height, &channels, 4);
@@ -30,9 +29,8 @@ bool load_texture_from_file(
 	return true;
 }
 
-bool load_texture_from_mem(uint &texture, const void *png_data, int png_size,
-						   GLenum min_filter, GLenum mag_filter, GLenum wrap_s, GLenum wrap_t,
-						   bool flip_y)
+bool load_texture_from_mem(uint &texture, const void *png_data, int png_size, bool flip_y,
+						   GLenum min_filter, GLenum mag_filter, GLenum wrap_s, GLenum wrap_t)
 {
 	int width, height, channels;
 	uint8 *pixels = stbi_load_from_memory((const unsigned char*)png_data, png_size, &width, &height, &channels, 4);
