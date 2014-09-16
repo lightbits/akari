@@ -19,10 +19,10 @@ void main()
 
 	// Scale up to world space
 	vec2 texel = vec2(0.5) + 0.5 * position.xz;
-	vec4 hl = texture(heightmap, texel - dx);
-	vec4 hr = texture(heightmap, texel + dx);
-	vec4 hb = texture(heightmap, texel - dz);
-	vec4 ht = texture(heightmap, texel + dz);
+	vec4 hl = texture(heightmap, texel - vec2(dx, 0.0));
+	vec4 hr = texture(heightmap, texel + vec2(dx, 0.0));
+	vec4 hb = texture(heightmap, texel - vec2(0.0, dz));
+	vec4 ht = texture(heightmap, texel + vec2(0.0, dz));
 	vec4 hc = texture(heightmap, texel);
 
 	float height = 0.5;
