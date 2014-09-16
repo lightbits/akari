@@ -5,8 +5,10 @@
 #include "opengl.h"
 #include "texture.h"
 
+void clearc(vec4 color);
 void clearc(uint32 color);
 void cleard(float depth);
+void clear(vec4 color, float depth);
 void clear(uint32 color, float depth);
 void cull(bool enabled, GLenum front = GL_CCW, GLenum mode = GL_BACK);
 void depth_test(bool enabled, GLenum func = GL_LEQUAL);

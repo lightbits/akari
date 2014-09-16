@@ -97,6 +97,34 @@ Mesh gen_grid(int lines)
 	return mesh;
 }
 
+Mesh gen_quad()
+{
+	const float hs = 1.0f;
+
+	// All faces are oriented counter-clockwise outwards
+	float vertices[] = {
+		-hs, -hs,
+		 hs, -hs,
+		 hs,  hs,
+		-hs,  hs
+	};
+
+	uint8 indices[] = { 0, 1, 2, 2, 3, 0 };
+
+	Mesh mesh;
+	mesh.vertex_buffer = gen_buffer(GL_ARRAY_BUFFER, sizeof(vertices), vertices);
+	mesh.index_buffer = gen_buffer(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices);
+	mesh.num_indices = 6;
+	mesh.num_vertices = 4;
+	mesh.draw = [=]() {
+		glBindBuffer(GL_ARRAY_BUFFER, mesh.vertex_buffer);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.index_buffer);
+		attribfv("position", 2, 2, 0);
+		glDrawElements(GL_TRIANGLES, mesh.num_indices, GL_UNSIGNED_BYTE, 0);
+	};
+	return mesh;
+}
+
 Mesh gen_tex_quad()
 {
 	const float hs = 1.0f;
