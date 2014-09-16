@@ -112,7 +112,7 @@ void gui::init(int window_width, int window_height)
 	const void *png_data;
 	uint png_size;
 	ImGui::GetDefaultFontData(NULL, NULL, &png_data, &png_size);
-	load_texture_from_mem(tex_font, png_data, png_size, GL_NEAREST, GL_NEAREST);
+	load_texture_from_mem(tex_font, png_data, png_size, false, GL_NEAREST, GL_NEAREST);
 }
 
 void gui::dispose()

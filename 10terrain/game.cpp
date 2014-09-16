@@ -15,7 +15,8 @@ float
 	terrain_scale,
 	terrain_height;
 int 
-	terrain_samples;
+	terrain_samples_x,
+	terrain_samples_y;
 
 Mesh gen_terrain_mesh(int samples_x, int samples_y)
 {
@@ -60,8 +61,12 @@ Mesh gen_terrain_mesh(int samples_x, int samples_y)
 void gen_heightmap()
 {
 	use_shader(shader_generate);
+	blend_mode(false);
+	depth_test(false);
+	depth_write(false);
 	glBindFramebuffer(GL_FRAMEBUFFER, rt_heightmap.fbo);
 	glViewport(0, 0, rt_heightmap.width, rt_heightmap.height);
+	clearc(0x00000000);
 	mesh_quad.draw();
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glViewport(0, 0, window_width, window_height);
@@ -89,12 +94,13 @@ void init_game()
 	mat_projection = perspective(PI / 4.0f, window_width / float(window_height), 0.1f, 10.0f);
 
 	terrain_frequency = 10.28f;
-	terrain_samples = 32;
 	terrain_scale = 7.978f;
 	terrain_height = 0.6f;
-	mesh_terrain = gen_terrain_mesh(32, 32);
+	terrain_samples_x = 32;
+	terrain_samples_y = 32;
+	mesh_terrain = gen_terrain_mesh(terrain_samples_x, terrain_samples_y);
 	mesh_quad = gen_quad();
-	rt_heightmap = gen_rendertexture(32, 32, GL_RGBA32F, GL_LINEAR, GL_LINEAR);
+	rt_heightmap = gen_rendertexture(terrain_samples_x, terrain_samples_y, GL_RGBA32F, GL_LINEAR, GL_LINEAR);
 	gen_heightmap();
 }
 
@@ -119,20 +125,19 @@ void render_game(float dt)
 	clear(vec4(background, 1.0f), 1.0f);
 
 	use_shader(shader_terrain);
-	//glBindTexture(GL_TEXTURE_2D, rt_heightmap.color);
-	//uniform("heightmap", 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, rt_heightmap.color);
+	uniform("heightmap", 0);
 	uniform("projection", mat_projection);
 	uniform("view", mat_view);
-	uniform("model", scale(1.0f));
 	uniform("lightPos", light_pos);
 	uniform("lightColor", light_color);
 	uniform("fogColor", fog_color);
 	uniform("fogDensity", fog_density);
 	uniform("ambient", ambient);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	uniform("sampleRes", vec2(terrain_samples_x, terrain_samples_y));
 	mesh_terrain.draw();
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	ImGui::NewFrame();
 	ImGui::Begin("Terrain shader");
 	ImGui::SliderFloat3("lightPos", &light_pos[0], -2.0f, 2.0f);
@@ -145,7 +150,8 @@ void render_game(float dt)
 	ImGui::SliderFloat("terrainScale", &terrain_scale, 1.0f, 16.0f);
 	ImGui::SliderFloat("terrainFrequency", &terrain_frequency, 0.5f, 3.0f * terrain_scale);
 	ImGui::SliderFloat("terrainHeight", &terrain_height, 0.0f, 2.0f);
-	ImGui::SliderInt("terrainSamples", &terrain_samples, 1, 128);
+	ImGui::SliderInt("terrainSamplesX", &terrain_samples_x, 1, 128);
+	ImGui::SliderInt("terrainSamplesY", &terrain_samples_y, 1, 128);
 	ImGui::SliderFloat("viewRadius", &view_radius, 0.0f, 4.0f);
 	ImGui::End();
 	ImGui::Render();

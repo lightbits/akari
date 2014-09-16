@@ -34,13 +34,13 @@ void main()
     gooch = diffuse;
     vec3 color = gooch;
 
-    float slope = abs(worldNormal.y);
-    if (slope < 0.8)
-        color -= vec3(0.07, 0.1, 0.10) * 2;
-    if (slope > 0.8 && worldPos.y > 0.05)
-        color += vec3(0.35) * 0.7;
-    if (slope > 0.8 && worldPos.y > -0.04 && worldPos.y < 0.02)
-        color *= vec3(0.5, 0.95, 0.55);
+    // float slope = abs(worldNormal.y);
+    // if (slope < 0.8)
+    //     color -= vec3(0.07, 0.1, 0.10) * 2;
+    // if (slope > 0.8 && worldPos.y > 0.05)
+    //     color += vec3(0.35) * 0.7;
+    // if (slope > 0.8 && worldPos.y > -0.04 && worldPos.y < 0.02)
+    //     color *= vec3(0.5, 0.95, 0.55);
 
 	// Fog
     const float LOG2 = 1.442695;
@@ -59,9 +59,4 @@ void main()
 
     outColor.rgb = color;
     outColor.a = 1.0;
-
-    // Color based on normal
-    // outColor = vec4(worldNormal * 0.5 + vec3(0.5), 1.0);
-	outColor.rgb *= 0.0001;
-	outColor.rgb += vec3(0.8, 0.5, 0.8);
 }
