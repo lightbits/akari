@@ -27,6 +27,7 @@ solution "akari"
 	include "07gui"
 	include "08dithering"
 	include "09collision"
+	include "10terrain"
 	include "11sdffont"
 	
 	-- Specify the base graphics library

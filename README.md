@@ -7,6 +7,8 @@ A 3D graphics library full of helpful functions and things.
 * Model loading
 * ImGui    
 	[ocornut's library](https://github.com/ocornut/imgui)
+* Dithering pixel shader  
+	http://danfessler.com/blog/hd-index-painting-in-photoshop  
 
 ### todo ###
 

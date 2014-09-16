@@ -2,10 +2,10 @@
 
 Shader current;
 
-void clearc(uint32 color)
+void clearc(uint32 color) { clearc(to_rgba(color)); }
+void clearc(vec4 color)
 {
-	vec4 rgba = to_rgba(color);
-	glClearColor(rgba.x, rgba.y, rgba.z, rgba.w);
+	glClearColor(color.x, color.y, color.z, color.w);
 	glClear(GL_COLOR_BUFFER_BIT);
 }
 
@@ -15,11 +15,11 @@ void cleard(float depth)
 	glClear(GL_DEPTH_BUFFER_BIT);
 }
 
-void clear(uint32 color, float depth)
+void clear(uint32 color, float depth) { clear(to_rgba(color), depth); }
+void clear(vec4 color, float depth)
 {
-	vec4 rgba = to_rgba(color);
 	glClearDepth(depth);
-	glClearColor(rgba.x, rgba.y, rgba.z, rgba.w);
+	glClearColor(color.x, color.y, color.z, color.w);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 

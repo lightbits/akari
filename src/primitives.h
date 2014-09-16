@@ -32,6 +32,7 @@ Mesh gen_cube();
 Mesh gen_grid(int lines);
 Mesh gen_line(vec3 v0, vec3 v1);
 Mesh gen_normal_cube();
+Mesh gen_quad();
 Mesh gen_tex_quad();
 
 #endif
