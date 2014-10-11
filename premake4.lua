@@ -29,6 +29,8 @@ solution "akari"
 	include "09collision"
 	include "10terrain"
 	include "11sdffont"
+	include "12menu"
+	include "13tilemap"
 	
 	-- Specify the base graphics library
 	project "akari"

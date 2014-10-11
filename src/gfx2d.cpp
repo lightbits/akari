@@ -16,7 +16,7 @@ static const char *VERTEX_SHADER_SRC = GLSL(
 	{
 		vColor = color;
 		vTexel = texel;
-		gl_Position = projection * vec4(position + vec2(0.375, 0.375), 0.0, 1.0);
+		gl_Position = projection * vec4(floor(position + vec2(0.375, 0.375)), 0.0, 1.0);
 	}
 );
 

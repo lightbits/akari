@@ -61,6 +61,7 @@ Mesh gen_terrain_mesh(int samples_x, int samples_y)
 void gen_heightmap()
 {
 	use_shader(shader_generate);
+	uniform("time", get_elapsed_time());
 	blend_mode(false);
 	depth_test(false);
 	depth_write(false);
@@ -114,20 +115,25 @@ void render_game(float dt)
 	static vec3 light_pos = vec3(0.0f, 2.0f, 2.0f);
 	static vec3 light_color = vec3(1.0f, 0.8f, 0.5f);
 	static vec3 ambient = vec3(67.0f, 66.0f, 63.0f) / 255.0f;
-	static vec3 background = vec3(0.55, 0.45, 0.45);
+	static vec3 background = vec3(0.0f);
+	//static vec3 background = vec3(0.55, 0.45, 0.45);
 	static vec2 view_rot = vec2(-0.3f, 2.76f);
 	static float view_radius = 2.0f;
 	static float fog_density = 0.206f;
 	static vec3 fog_color = background * background;
+	static bool wireframe = false;
 	mat4 mat_view = translate(0.0f, 0.0f, -view_radius) * rotateX(view_rot.x) * rotateY(view_rot.y);
 	depth_test(true, GL_LEQUAL);
 	depth_write(true);
 	clear(vec4(background, 1.0f), 1.0f);
 
+	if (wireframe)
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	use_shader(shader_terrain);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, rt_heightmap.color);
-	uniform("heightmap", 0);
+	uniform("time", get_elapsed_time());
+	//uniform("heightmap", 0);
 	uniform("projection", mat_projection);
 	uniform("view", mat_view);
 	uniform("lightPos", light_pos);
@@ -138,6 +144,7 @@ void render_game(float dt)
 	uniform("sampleRes", vec2(terrain_samples_x, terrain_samples_y));
 	mesh_terrain.draw();
 
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	ImGui::NewFrame();
 	ImGui::Begin("Terrain shader");
 	ImGui::SliderFloat3("lightPos", &light_pos[0], -2.0f, 2.0f);
@@ -153,6 +160,21 @@ void render_game(float dt)
 	ImGui::SliderInt("terrainSamplesX", &terrain_samples_x, 1, 128);
 	ImGui::SliderInt("terrainSamplesY", &terrain_samples_y, 1, 128);
 	ImGui::SliderFloat("viewRadius", &view_radius, 0.0f, 4.0f);
+	ImGui::Checkbox("wireframe", &wireframe);
+	if (ImGui::Button("Reload"))
+	{
+		shader_generate.dispose();
+		shader_terrain.dispose();
+		while (!shader_generate.load_from_file("./generate.vs", "./generate.fs") ||
+			   !shader_terrain.load_from_file("./terrain.vs", "./terrain.fs"))
+		{
+			APP_LOG << "Failed to load shaders. [Press any key to continue]";
+			std::cin.get();
+		}
+		mesh_terrain.dispose();
+		mesh_terrain = gen_terrain_mesh(terrain_samples_x, terrain_samples_y);
+		gen_heightmap();
+	}
 	ImGui::End();
 	ImGui::Render();
 }

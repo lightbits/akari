@@ -82,15 +82,15 @@ void surf3d(vec3 p, vec3 n, float radius, uint color)
 
 void render_game(float dt)
 {
-	//float t = get_elapsed_time();
-	//view = translate(0.0f, 0.0f, -3.0f) * rotateX(-0.5f) * rotateY(t * 0.2f);
+	float t = get_elapsed_time();
+	view = translate(0.0f, 0.0f, -3.0f) * rotateX(-0.5f) * rotateY(t * 0.2f);
 
-	//using namespace gfx2d;
-	//clearc(0x2a2a2aff);
-	//begin();
-	//line3d(vec3(0.0f), vec3(1.0f, 0.0f, 0.0f), 0xff8855ff);
-	//line3d(vec3(0.0f), vec3(0.0f, 1.0f, 0.0f), 0x88ff55ff);
-	//line3d(vec3(0.0f), vec3(0.0f, 0.0f, 1.0f), 0x5588ffff);
+	using namespace gfx2d;
+	clearc(0x2a2a2aff);
+	begin();
+	line3d(vec3(0.0f), vec3(1.0f, 0.0f, 0.0f), 0xff8855ff);
+	line3d(vec3(0.0f), vec3(0.0f, 1.0f, 0.0f), 0x88ff55ff);
+	line3d(vec3(0.0f), vec3(0.0f, 0.0f, 1.0f), 0x5588ffff);
 
 	//int n = 32;
 	//for (int i = 0; i < n; i++)
@@ -104,40 +104,40 @@ void render_game(float dt)
 	//	line3d(vec3(0.0f), r, 0xff8855ff);
 	//}
 
-	//int u_strats = 16;
-	//int v_strats = 16;
-	//int n_samples = u_strats * v_strats;
-	//for (int ui = 0; ui < u_strats; ui++)
-	//{
-	//	for (int vi = 0; vi < v_strats; vi++)
-	//	{
-	//		float uf = noise2f(ui, vi);
-	//		float vf = noise2f(ui * 3 + 255, vi * 5 + 127);
-	//		float u = (ui + uf) * TWO_PI / (float)u_strats;
-	//		float v = (vi + vf) * PI / (float)v_strats;
-	//		float r = cos(v);
-	//		float x = r * sin(u);
-	//		float y = sin(v);
-	//		float z = r * cos(u);
+	int u_strats = 16;
+	int v_strats = 16;
+	int n_samples = u_strats * v_strats;
+	for (int ui = 0; ui < u_strats; ui++)
+	{
+		for (int vi = 0; vi < v_strats; vi++)
+		{
+			float uf = noise2f(ui, vi);
+			float vf = noise2f(ui * 3 + 255, vi * 5 + 127);
+			float u = (ui + uf) * TWO_PI / (float)u_strats;
+			float v = (vi + vf) * PI / (float)v_strats;
+			float r = cos(v);
+			float x = r * sin(u);
+			float y = sin(v);
+			float z = r * cos(u);
 
-	//		vec3 p = vec3(x, y, z);
-	//		uint8 red = 255 * (0.5f * p.x + 0.5f);
-	//		uint8 gre = 255 * (0.5f * p.y + 0.5f);
-	//		uint8 blu = 255 * (0.5f * p.z + 0.5f);
-	//		float alpha = p.z * 0.5f + 0.5f;
-	//		surf3d(p, p, 0.025f, (red << 24) | (gre << 16) | (blu << 8) | 0xff);
-	//	}
-	//}
+			vec3 p = vec3(x, y, z);
+			uint8 red = 255 * (0.5f * p.x + 0.5f);
+			uint8 gre = 255 * (0.5f * p.y + 0.5f);
+			uint8 blu = 255 * (0.5f * p.z + 0.5f);
+			float alpha = p.z * 0.5f + 0.5f;
+			surf3d(p, p, 0.025f, (red << 24) | (gre << 16) | (blu << 8) | 0xff);
+		}
+	}
 
-	//end();
-	//blend_mode(true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_FUNC_ADD);
+	end();
+	blend_mode(true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_FUNC_ADD);
 	//clear(0x445788ff, 1.0);
 
-	use_shader(shader_sdf);
+	//use_shader(shader_sdf);
 	//glBindTexture(GL_TEXTURE_2D, tex_sdf);
 	//uniform("tex", 0);
-	uniform("zoom", zoom);
-	quad.draw();
+	//uniform("zoom", zoom);
+	//quad.draw();
 }
 
 void on_key_up(uint16 mod, SDL_Keycode key) 
