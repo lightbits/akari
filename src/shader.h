@@ -30,6 +30,9 @@ public:
 	void set_uniform(string name, const vec4 &v);
 	void set_uniform(string name, const vec3 &v);
 	void set_uniform(string name, const vec2 &v);
+	void set_uniform(string name, const vec4i &v);
+	void set_uniform(string name, const vec3i &v);
+	void set_uniform(string name, const vec2i &v);
 	void set_uniform(string name, double v);
 	void set_uniform(string name, float v);
 	void set_uniform(string name, int v);

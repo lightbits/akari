@@ -10,6 +10,7 @@ namespace gfx2d
 	void begin();
 	void end();
 	void use_font(Font &font);
+	void set_layer(float depth);
 	void line(vec2 p0, vec2 p1, uint color);
 	void line(float x0, float y0, float x1, float y1, uint color);
 	void rectangle(vec2 p, vec2 size, uint color);

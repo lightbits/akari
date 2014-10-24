@@ -159,6 +159,9 @@ void uniform(string name, const mat2 &v) { current.set_uniform(name, v); }
 void uniform(string name, const vec4 &v) { current.set_uniform(name, v); }
 void uniform(string name, const vec3 &v) { current.set_uniform(name, v); }
 void uniform(string name, const vec2 &v) { current.set_uniform(name, v); }
+void uniform(string name, const vec4i &v) { current.set_uniform(name, v); }
+void uniform(string name, const vec3i &v) { current.set_uniform(name, v); }
+void uniform(string name, const vec2i &v) { current.set_uniform(name, v); }
 void uniform(string name, double v) { current.set_uniform(name, v); }
 void uniform(string name, float v) { current.set_uniform(name, v); }
 void uniform(string name, int v) { current.set_uniform(name, v); }

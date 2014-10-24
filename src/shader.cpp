@@ -180,6 +180,9 @@ void Shader::set_uniform(string name, const mat2 &v) { glUniformMatrix4fv(get_un
 void Shader::set_uniform(string name, const vec4 &v) { glUniform4f(get_uniform_location(name), v.x, v.y, v.z, v.w); }
 void Shader::set_uniform(string name, const vec3 &v) { glUniform3f(get_uniform_location(name), v.x, v.y, v.z); }
 void Shader::set_uniform(string name, const vec2 &v) { glUniform2f(get_uniform_location(name), v.x, v.y); }
+void Shader::set_uniform(string name, const vec4i &v) { glUniform4i(get_uniform_location(name), v.x, v.y, v.z, v.w); }
+void Shader::set_uniform(string name, const vec3i &v) { glUniform3i(get_uniform_location(name), v.x, v.y, v.z); }
+void Shader::set_uniform(string name, const vec2i &v) { glUniform2i(get_uniform_location(name), v.x, v.y); }
 void Shader::set_uniform(string name, double v) { glUniform1f(get_uniform_location(name), v); }
 void Shader::set_uniform(string name, float v) { glUniform1f(get_uniform_location(name), v); }
 void Shader::set_uniform(string name, int v) { glUniform1i(get_uniform_location(name), v); }

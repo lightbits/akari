@@ -86,7 +86,10 @@ void render_game(float dt)
 	view = translate(0.0f, 0.0f, -3.0f) * rotateX(-0.5f) * rotateY(t * 0.2f);
 
 	using namespace gfx2d;
-	clearc(0x2a2a2aff);
+	depth_test(true, GL_LEQUAL);
+	depth_write(true);
+	clear(0x2a2a2aff, 1.0f);
+	//clearc(0x2a2a2aff);
 	begin();
 	line3d(vec3(0.0f), vec3(1.0f, 0.0f, 0.0f), 0xff8855ff);
 	line3d(vec3(0.0f), vec3(0.0f, 1.0f, 0.0f), 0x88ff55ff);
@@ -121,10 +124,12 @@ void render_game(float dt)
 			float z = r * cos(u);
 
 			vec3 p = vec3(x, y, z);
-			uint8 red = 255 * (0.5f * p.x + 0.5f);
-			uint8 gre = 255 * (0.5f * p.y + 0.5f);
-			uint8 blu = 255 * (0.5f * p.z + 0.5f);
-			float alpha = p.z * 0.5f + 0.5f;
+			uint8 red = 255 * (0.5f * x + 0.5f);
+			uint8 gre = 255 * (0.5f * y + 0.5f);
+			uint8 blu = 255 * (0.5f * z + 0.5f);
+			float alpha = z * 0.5f + 0.5f;
+			vec4 c = projection * view * vec4(x, y, z, 1.0f);
+			set_layer(0.5f + 0.5f * c.z / c.w);
 			surf3d(p, p, 0.025f, (red << 24) | (gre << 16) | (blu << 8) | 0xff);
 		}
 	}

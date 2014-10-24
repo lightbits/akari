@@ -230,7 +230,7 @@ void update_paddle(float dt)
 
 void update_ball(float dt)
 {
-	ball.velocity.y += 700.0f * dt;
+	ball.velocity.y += 200.0f * dt;
 	vec2 displacement;
 	if (intersects(ball.bounds, paddle.bounds, displacement))
 	{

@@ -1,41 +1,29 @@
+
 #include "game.h"
-
-/*
-func pointers
-*/
-
-Font font;
 
 bool load_game(int width, int height)
 {
-	if (!load_font(font, "../data/fonts/proggytinyttsz_8x12.png"))
-		return false;
-	gfx2d::init(width, height);
-	gfx2d::use_font(font);
-	return true;
+    return true;
 }
 
 void free_game()
 {
-	font.dispose();
+    
 }
 
 void init_game()
 {
-	
+    
 }
 
 void update_game(float dt)
 {
-	
+    
 }
 
 void render_game(float dt)
 {
-	using namespace gfx2d;
-	begin();
-	draw_string(5.0f, 5.0f, "Hello World!");
-	end();
+    
 }
 
 void on_key_up(uint16 mod, SDL_Keycode key) { }

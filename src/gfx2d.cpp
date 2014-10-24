@@ -5,30 +5,34 @@
 #define GLSL(src) "#version 150 core\n" #src
 
 static const char *VERTEX_SHADER_SRC = GLSL(
-	in vec2 position;
+	in vec3 position;
 	in vec2 texel;
 	in vec4 color;
 	out vec4 vColor;
 	out vec2 vTexel;
+	out float vDepth;
 	uniform mat4 projection;
 
 	void main()
 	{
 		vColor = color;
 		vTexel = texel;
-		gl_Position = projection * vec4(floor(position + vec2(0.375, 0.375)), 0.0, 1.0);
+		vDepth = position.z;
+		gl_Position = projection * vec4(floor(position.xy + vec2(0.375, 0.375)), 0.0, 1.0);
 	}
 );
 
 static const char *FRAGMENT_SHADER_SRC = GLSL(
 	in vec4 vColor;
 	in vec2 vTexel;
+	in float vDepth;
 	uniform sampler2D tex;
 	out vec4 outColor;
 
 	void main()
 	{
 		outColor = texture(tex, vTexel) * vColor;
+		gl_FragDepth = vDepth;
 	}
 );
 
@@ -41,7 +45,7 @@ struct DrawCmd
 
 static vector<DrawCmd> draw_cmds;
 static const int MAX_VERTICES = 2048;
-static const int VERTEX_SIZE = 8 * sizeof(float);
+static const int VERTEX_SIZE = 9 * sizeof(float);
 static int vertex_count = 0;
 
 static uint vertex_buffer;
@@ -49,16 +53,18 @@ static uint blank_texture;
 static Font *current_font = nullptr;
 static Shader shader;
 static mat4 mat_ortho;
+static float layer;
 
 void gfx2d::init(int width, int height)
 {
 	uint8 blank[] = { 255, 255, 255, 255 };
-	vertex_buffer = gen_buffer(GL_ARRAY_BUFFER, MAX_VERTICES * VERTEX_SIZE, NULL, GL_DYNAMIC_DRAW);
 	blank_texture = gen_texture(blank, 1, 1, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
+	vertex_buffer = gen_buffer(GL_ARRAY_BUFFER, MAX_VERTICES * VERTEX_SIZE, NULL, GL_DYNAMIC_DRAW);
 	bool status = shader.load_from_src(VERTEX_SHADER_SRC, FRAGMENT_SHADER_SRC);
 	ASSERT(status, "Failed to load default 2D shader");
 	mat_ortho = ortho(0.0f, float(width), float(height), 0.0f, 0.0f, 1.0f);
 	draw_cmds.clear();
+	layer = 0.0f;
 }
 
 void gfx2d::dispose()
@@ -111,9 +117,9 @@ void gfx2d::begin()
 	glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
 	glActiveTexture(GL_TEXTURE0);
 	use_shader(shader);
-	attribfv("position", 2, 8, 0);
-	attribfv("texel", 2, 8, 2);
-	attribfv("color", 4, 8, 4);
+	attribfv("position", 3, 9, 0);
+	attribfv("texel", 2, 9, 3);
+	attribfv("color", 4, 9, 5);
 	uniform("projection", mat_ortho);
 	uniform("tex", 0);
 }
@@ -145,13 +151,18 @@ void append_data(float *data, int count, GLenum mode, uint texture)
 	vertex_count += count;
 }
 
+void gfx2d::set_layer(float depth)
+{
+	layer = depth;
+}
+
 void gfx2d::line(vec2 p0, vec2 p1, uint color) { line(p0.x, p0.y, p1.x, p1.y, color); }
 void gfx2d::line(float x0, float y0, float x1, float y1, uint color)
 {
 	vec4 v_color = to_rgba(color);
 	float data[] = {
-		x0, y0, 0.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w,
-		x1, y1, 0.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w
+		x0, y0, layer, 0.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w,
+		x1, y1, layer, 0.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w
 	};
 	append_data(data, 2, GL_LINES, blank_texture);
 }
@@ -161,11 +172,11 @@ void gfx2d::rectangle(float x, float y, float w, float h, uint color)
 {
 	vec4 v_color = to_rgba(color);
 	float data[] = {
-		x, y,			0.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w,
-		x + w, y,		0.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w,
-		x + w, y + h,	0.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w,
-		x, y + h,		0.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w,
-		x, y,			0.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w
+		x, y,			layer, 0.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w,
+		x + w, y,		layer, 0.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w,
+		x + w, y + h,	layer, 0.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w,
+		x, y + h,		layer, 0.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w,
+		x, y,			layer, 0.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w
 	};
 	append_data(data, 5, GL_LINE_STRIP, blank_texture);
 }
@@ -174,12 +185,12 @@ void gfx2d::fill_quad(vec2 v0, vec2 v1, vec2 v2, vec2 v3, uint color)
 {
 	vec4 v_color = to_rgba(color);
 	float data[] = {
-		v0.x, v0.y,	0.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w,
-		v1.x, v1.y,	0.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w,
-		v2.x, v2.y,	0.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w,
-		v2.x, v2.y,	0.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w,
-		v3.x, v3.y,	0.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w,
-		v0.x, v0.y,	0.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w
+		v0.x, v0.y,	layer, 0.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w,
+		v1.x, v1.y,	layer, 0.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w,
+		v2.x, v2.y,	layer, 0.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w,
+		v2.x, v2.y,	layer, 0.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w,
+		v3.x, v3.y,	layer, 0.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w,
+		v0.x, v0.y,	layer, 0.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w
 	};
 	append_data(data, 6, GL_TRIANGLES, blank_texture);
 }
@@ -189,12 +200,12 @@ void gfx2d::fill_rectangle(float x, float y, float w, float h, uint color)
 {
 	vec4 v_color = to_rgba(color);
 	float data[] = {
-		x, y,			0.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w,
-		x + w, y,		0.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w,
-		x + w, y + h,	0.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w,
-		x + w, y + h,	0.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w,
-		x, y + h,		0.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w,
-		x, y,			0.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w
+		x, y,			layer, 0.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w,
+		x + w, y,		layer, 0.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w,
+		x + w, y + h,	layer, 0.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w,
+		x + w, y + h,	layer, 0.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w,
+		x, y + h,		layer, 0.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w,
+		x, y,			layer, 0.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w
 	};
 	append_data(data, 6, GL_TRIANGLES, blank_texture);
 }
@@ -204,12 +215,12 @@ void gfx2d::tex_rectangle(float x, float y, float w, float h, uint texture, uint
 {
 	vec4 v_color = to_rgba(color);
 	float data[] = {
-		x, y,			0.0f, 1.0f, v_color.x, v_color.y, v_color.z, v_color.w,
-		x + w, y,		1.0f, 1.0f, v_color.x, v_color.y, v_color.z, v_color.w,
-		x + w, y + h,	1.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w,
-		x + w, y + h,	1.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w,
-		x, y + h,		0.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w,
-		x, y,			0.0f, 1.0f, v_color.x, v_color.y, v_color.z, v_color.w
+		x, y,			layer, 0.0f, 1.0f, v_color.x, v_color.y, v_color.z, v_color.w,
+		x + w, y,		layer, 1.0f, 1.0f, v_color.x, v_color.y, v_color.z, v_color.w,
+		x + w, y + h,	layer, 1.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w,
+		x + w, y + h,	layer, 1.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w,
+		x, y + h,		layer, 0.0f, 0.0f, v_color.x, v_color.y, v_color.z, v_color.w,
+		x, y,			layer, 0.0f, 1.0f, v_color.x, v_color.y, v_color.z, v_color.w
 	};
 	append_data(data, 6, GL_TRIANGLES, texture);
 }
@@ -283,15 +294,15 @@ void gfx2d::draw_string(float x0, float y0, const string &text, uint color, bool
 		float w = float(glyph.width) * sx;
 		float h = float(glyph.height) * sy;
 		float quad[] = {
-			x, y,			glyph.u_left, glyph.v_bottom,	rgba.r, rgba.g, rgba.b, rgba.a,
-			x + w, y,		glyph.u_right, glyph.v_bottom,	rgba.r, rgba.g, rgba.b, rgba.a,
-			x + w, y + h,	glyph.u_right, glyph.v_top,		rgba.r, rgba.g, rgba.b, rgba.a,
-			x + w, y + h,	glyph.u_right, glyph.v_top,		rgba.r, rgba.g, rgba.b, rgba.a,
-			x, y + h,		glyph.u_left, glyph.v_top,		rgba.r, rgba.g, rgba.b, rgba.a,
-			x, y,			glyph.u_left, glyph.v_bottom,	rgba.r, rgba.g, rgba.b, rgba.a
+			x, y,			layer, glyph.u_left,  glyph.v_bottom,	rgba.r, rgba.g, rgba.b, rgba.a,
+			x + w, y,		layer, glyph.u_right, glyph.v_bottom,	rgba.r, rgba.g, rgba.b, rgba.a,
+			x + w, y + h,	layer, glyph.u_right, glyph.v_top,		rgba.r, rgba.g, rgba.b, rgba.a,
+			x + w, y + h,	layer, glyph.u_right, glyph.v_top,		rgba.r, rgba.g, rgba.b, rgba.a,
+			x, y + h,		layer, glyph.u_left,  glyph.v_top,		rgba.r, rgba.g, rgba.b, rgba.a,
+			x, y,			layer, glyph.u_left,  glyph.v_bottom,	rgba.r, rgba.g, rgba.b, rgba.a
 		};
 
-		v_buffer.insert(v_buffer.end(), quad, quad + 48);
+		v_buffer.insert(v_buffer.end(), quad, quad + sizeof(quad) / sizeof(float));
 
 		x += w;
 	}

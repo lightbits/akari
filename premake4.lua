@@ -31,6 +31,8 @@ solution "akari"
 	include "11sdffont"
 	include "12menu"
 	include "13tilemap"
+	include "14pathfields"
+	include "15ssao"
 	
 	-- Specify the base graphics library
 	project "akari"
