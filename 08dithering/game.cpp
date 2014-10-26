@@ -39,7 +39,7 @@ bool load_game(int width, int height)
 
 	tex_dither = gen_texture(dither_pattern, 2, 2, GL_R8, GL_RED, GL_UNSIGNED_BYTE, GL_NEAREST, GL_NEAREST);
 
-	mesh_quad = gen_tex_quad();
+	mesh_quad = Primitive::tex_quad();
 	return true;
 }
 

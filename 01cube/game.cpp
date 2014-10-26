@@ -22,7 +22,7 @@ bool load_game(int width, int height)
 	if (!load_font(font, "../data/fonts/proggytinyttsz_8x12.png"))
 		return false;
 
-	cube = gen_normal_cube();
+	cube = Primitive::normal_cube();
 	return true;
 }
 

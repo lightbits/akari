@@ -36,7 +36,7 @@ void init_game()
 	gfx2d::init(window_width, window_height);
 	projection = perspective(PI / 4.0f, 1.0f, 0.1f, 10.0f);
 	view = translate(0.0f, 0.0f, -3.0f) * rotateY(0.3f) * rotateX(-0.3f);
-	quad = gen_tex_quad();
+	quad = Primitive::tex_quad();
 }
 
 void update_game(float dt)

@@ -28,11 +28,14 @@ struct Model
 	void draw();
 };
 
-Mesh gen_cube();
-Mesh gen_grid(int lines);
-Mesh gen_line(vec3 v0, vec3 v1);
-Mesh gen_normal_cube();
-Mesh gen_quad();
-Mesh gen_tex_quad();
+namespace Primitive
+{
+	Mesh cube();
+	Mesh normal_cube();
+	Mesh grid(int lines);
+	Mesh line(vec3 v0, vec3 v1);
+	Mesh quad();
+	Mesh tex_quad();
+}
 
 #endif

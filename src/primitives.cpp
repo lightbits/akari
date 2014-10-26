@@ -2,7 +2,7 @@
 #include "gfx.h"
 #include "log.h"
 
-Mesh gen_normal_cube()
+Mesh Primitive::normal_cube()
 {
 	const float hs = 0.5f;
 
@@ -69,7 +69,7 @@ Mesh gen_normal_cube()
 	return mesh;
 }
 
-Mesh gen_grid(int lines)
+Mesh Primitive::grid(int lines)
 {
 	vec3 *vertices = new vec3[lines * 4];
 
@@ -97,7 +97,7 @@ Mesh gen_grid(int lines)
 	return mesh;
 }
 
-Mesh gen_quad()
+Mesh Primitive::quad()
 {
 	const float hs = 1.0f;
 
@@ -124,7 +124,7 @@ Mesh gen_quad()
 	return mesh;
 }
 
-Mesh gen_tex_quad()
+Mesh Primitive::tex_quad()
 {
 	const float hs = 1.0f;
 
@@ -153,7 +153,7 @@ Mesh gen_tex_quad()
 	return mesh;
 }
 
-Mesh gen_line(vec3 v0, vec3 v1)
+Mesh Primitive::line(vec3 v0, vec3 v1)
 {
 	vec3 vertices[] = { v0, v1 };
 

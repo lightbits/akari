@@ -33,6 +33,7 @@ solution "akari"
 	include "13tilemap"
 	include "14pathfields"
 	include "15ssao"
+	include "16rllight"
 	
 	-- Specify the base graphics library
 	project "akari"

@@ -74,6 +74,7 @@ void render_lists(ImDrawList **const cmd_lists, int cmd_lists_count)
 		}
 	}
 	glDisable(GL_SCISSOR_TEST);
+	blend_mode(false);
 }
 
 void gui::init(int window_width, int window_height)

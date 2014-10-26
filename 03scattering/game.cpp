@@ -44,7 +44,7 @@ bool load_game(int width, int height)
 		glDrawElements(GL_TRIANGLES, mesh_teapot.num_indices, GL_UNSIGNED_INT, 0);
 	};
 
-	mesh_quad = gen_tex_quad();
+	mesh_quad = Primitive::tex_quad();
 	return true;
 }
 

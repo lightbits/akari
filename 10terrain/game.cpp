@@ -100,7 +100,7 @@ void init_game()
 	terrain_samples_x = 32;
 	terrain_samples_y = 32;
 	mesh_terrain = gen_terrain_mesh(terrain_samples_x, terrain_samples_y);
-	mesh_quad = gen_quad();
+	mesh_quad = Primitive::quad();
 	rt_heightmap = gen_rendertexture(terrain_samples_x, terrain_samples_y, GL_RGBA32F, GL_LINEAR, GL_LINEAR);
 	gen_heightmap();
 }

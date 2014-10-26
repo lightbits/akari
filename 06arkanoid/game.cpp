@@ -104,7 +104,7 @@ bool load_game(int width, int height)
 	if (!shader_3D.load_from_src(SHADER_3D_VS, SHADER_3D_FS))
 		return false;
 
-	mesh_cube = gen_normal_cube();
+	mesh_cube = Primitive::normal_cube();
 
 	return true;
 }

@@ -28,7 +28,7 @@ void free_game()
 
 void init_game()
 {
-	quad = gen_tex_quad();
+	quad = Primitive::tex_quad();
 }
 
 void update_game(float dt)
