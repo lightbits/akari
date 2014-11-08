@@ -34,6 +34,7 @@ solution "akari"
 	include "14pathfields"
 	include "15ssao"
 	include "16rllight"
+	include "17invkine"
 	
 	-- Specify the base graphics library
 	project "akari"

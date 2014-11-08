@@ -57,7 +57,7 @@ unsigned int xor128()
 
 	t = x ^ (x << 11);
 	x = y; y = z; z = w;
-	return w = w ^ (w >> 19) ^ (t ^ (t >>8));
+	return w = w ^ (w >> 19) ^ (t ^ (t >> 8));
 }
 
 // Returns a single precision floating-point value uniformly over the interval [0.0, 1.0]
