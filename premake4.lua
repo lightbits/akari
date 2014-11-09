@@ -35,6 +35,7 @@ solution "akari"
 	include "15ssao"
 	include "16rllight"
 	include "17invkine"
+	include "18procjam"
 	
 	-- Specify the base graphics library
 	project "akari"

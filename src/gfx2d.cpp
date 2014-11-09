@@ -283,7 +283,6 @@ void gfx2d::draw_string(float x0, float y0, const string &text, uint color, bool
 	for (int j = 0; j < text.size(); j++)
 	{
 		char c = text[j];
-		Glyph glyph = current_font->glyphs.find(c)->second;
 		if (c == '\n')
 		{
 			y += line_height;
@@ -291,6 +290,7 @@ void gfx2d::draw_string(float x0, float y0, const string &text, uint color, bool
 			continue;
 		}
 
+		Glyph glyph = current_font->glyphs.find(c)->second;
 		float w = float(glyph.width) * sx;
 		float h = float(glyph.height) * sy;
 		float quad[] = {
