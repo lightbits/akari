@@ -33,6 +33,38 @@ static const char *GEOMETRY_FS = GLSL(
 	}
 );
 
+class Timer
+{
+public:
+	Timer() : done(true), time(0.0f) { }
+	Timer(float initial) { reset(initial); }
+
+	float get_time() { return time; }
+
+	void reset(float initial)
+	{
+		time = initial;
+		done = false;
+	}
+
+	void tick(float dt) 
+	{
+		if (time > 0.0f)
+		{
+			time -= dt; 
+		}
+		else if (!done)
+		{
+			done = true;
+			reached_zero();
+		}
+	}
+	std::function<void()> reached_zero;
+private:
+	bool done;
+	float time;
+};
+
 Shader 
 	shader_geometry;
 Mesh 
@@ -42,9 +74,15 @@ Mesh
 mat4
 	mat_projection,
 	mat_view;
+Timer
+	anim_timer;
 int
 	window_width,
 	window_height;
+vector<vec3> cube_colors;
+vector<vec3> cube_targets;
+vector<vec3> cube_velos;
+vector<vec3> cube_poses;
 
 Mesh gen_grid_box()
 {
@@ -123,11 +161,58 @@ void free_game()
 	
 }
 
+void cube_anim_done()
+{
+	vec3 first = cube_targets[0];
+	for (int i = 0; i < cube_targets.size() - 1; i++)
+		cube_targets[i] = cube_targets[i + 1];
+	cube_targets.back() = first;
+	anim_timer.reset(1.0f);
+}
+
 void init_game()
 {
 	mesh_grid = Primitive::grid(16);
 	mesh_box = gen_grid_box();
 	mesh_line = gen_line();
+	anim_timer.reset(2.0f);
+
+	int N = 4;
+	for (int side = 0; side < 4; side++)
+	{
+		vec3 a, b;
+		switch (side)
+		{
+		case 0:
+			a = vec3(-1.0f, -1.0f, 0.0f);
+			b = vec3(-1.0f, +1.0f, 0.0f);
+			break;
+		case 1:
+			a = vec3(-1.0f, +1.0f, 0.0f);
+			b = vec3(+1.0f, +1.0f, 0.0f);
+			break;
+		case 2:
+			a = vec3(+1.0f, +1.0f, 0.0f);
+			b = vec3(+1.0f, -1.0f, 0.0f);
+			break;
+		case 3:
+			a = vec3(+1.0f, -1.0f, 0.0f);
+			b = vec3(-1.0f, -1.0f, 0.0f);
+			break;
+		}
+		for (int i = 0; i < N; i++)
+		{
+			if ((i == 0 && side > 0) || (i == N - 1 && side == 3))
+				continue;
+			float blend = i / float(N - 1);
+			cube_targets.push_back(a + (b - a) * blend);
+			//cube_poses.push_back(a + (b - a) * blend);
+			cube_colors.push_back(vec3(0.4 + 0.6 * frand(), 0.3 + 0.7 * frand(), 0.35 + 0.65 * frand()));
+			cube_poses.push_back(vec3(0.0f));
+			cube_velos.push_back(vec3(0.0f));
+		}
+	}
+	anim_timer.reached_zero = cube_anim_done;
 }
 
 void spring_damper(vec3 &x, vec3 &dx, vec3 ref, float kp, float kd, float sigma, float dt)
@@ -150,7 +235,6 @@ void spring_damper(float &x, float &dx, float ref, float kp, float kd, float sig
 
 void update_game(float dt)
 {
-
 	// Dynamic camera
 	static vec3 up_direction = vec3(0.0f, 1.0f, 0.0f);
 	static vec3 up_velocity = vec3(0.0f, 0.0f, 0.0f);
@@ -185,6 +269,10 @@ void update_game(float dt)
 		zoom_ref -= 0.4f * dt;
 	else if (is_key_down('x'))
 		zoom_ref += 0.4f * dt;
+
+	anim_timer.tick(dt);
+	for (int i = 0; i < cube_poses.size(); i++)
+		spring_damper(cube_poses[i], cube_velos[i], cube_targets[i], 100.0f, 8.0f, 0.5f, dt);
 }
 
 void render_shadowed_mesh(const Mesh &mesh, const mat4 &model, const vec3 &color)
@@ -218,35 +306,41 @@ void render_game(float dt)
 	uniform("view", mat_view);
 	uniform("model", scale(1.0f));
 	uniform("color", vec3(0.4f, 0.45f, 0.48f));
-	mesh_grid.draw();
+	//mesh_grid.draw();
 
 	float t = get_elapsed_time();
-	render_shadowed_mesh(
-		mesh_box, 
-		translate(0.0f, 0.5f, 0.0f) * scale(0.25f, 0.25f, 1.0f), 
-		vec3(1.0f));
+	//render_shadowed_mesh(
+	//	mesh_box, 
+	//	translate(0.0f, 0.5f, 0.0f) * scale(0.25f, 0.25f, 1.0f), 
+	//	vec3(1.0f));
 
-	render_shadowed_mesh(
-		mesh_line, 
-		translate(0.0f, 0.5f, 0.0f) * scale(0.25f, 0.25f, 1.0f) * translate(-0.5f, +0.5f, -0.5f) * rotateZ(0.7f) * scale(1.0f, 0.5f, 1.0f), 
-		vec3(1.0f));
+	//render_shadowed_mesh(
+	//	mesh_line, 
+	//	translate(0.0f, 0.5f, 0.0f) * scale(0.25f, 0.25f, 1.0f) * translate(-0.5f, +0.5f, -0.5f) * rotateZ(0.7f) * scale(1.0f, 0.5f, 1.0f), 
+	//	vec3(1.0f));
 
-	render_shadowed_mesh(
-		mesh_line, 
-		translate(0.0f, 0.5f, 0.0f) * scale(0.25f, 0.25f, 1.0f) * translate(-0.5f, +0.5f, +0.5f) * rotateZ(0.7f) * scale(1.0f, 0.5f, 1.0f), 
-		vec3(1.0f));
+	//render_shadowed_mesh(
+	//	mesh_line, 
+	//	translate(0.0f, 0.5f, 0.0f) * scale(0.25f, 0.25f, 1.0f) * translate(-0.5f, +0.5f, +0.5f) * rotateZ(0.7f) * scale(1.0f, 0.5f, 1.0f), 
+	//	vec3(1.0f));
 
-	render_shadowed_mesh(
-		mesh_line, 
-		translate(0.0f, 0.5f, 0.0f) * scale(0.25f, 0.25f, 1.0f) * translate(+0.5f, +0.5f, -0.5f) * rotateZ(-0.7f) * scale(1.0f, 0.5f, 1.0f), 
-		vec3(1.0f));
+	//render_shadowed_mesh(
+	//	mesh_line, 
+	//	translate(0.0f, 0.5f, 0.0f) * scale(0.25f, 0.25f, 1.0f) * translate(+0.5f, +0.5f, -0.5f) * rotateZ(-0.7f) * scale(1.0f, 0.5f, 1.0f), 
+	//	vec3(1.0f));
 
-	render_shadowed_mesh(
-		mesh_line, 
-		translate(0.0f, 0.5f, 0.0f) * scale(0.25f, 0.25f, 1.0f) * translate(+0.5f, +0.5f, +0.5f) * rotateZ(-0.7f) * scale(1.0f, 0.5f, 1.0f), 
-		vec3(1.0f));
+	//render_shadowed_mesh(
+	//	mesh_line, 
+	//	translate(0.0f, 0.5f, 0.0f) * scale(0.25f, 0.25f, 1.0f) * translate(+0.5f, +0.5f, +0.5f) * rotateZ(-0.7f) * scale(1.0f, 0.5f, 1.0f), 
+	//	vec3(1.0f));
 
-	render_grass(dt);
+	//render_grass(dt);
+
+	float tl = clamp(anim_timer.get_time(), 0.75f, 1.0f);
+	mat4 global_mod = rotateZ(cos(t * 0.2f)) * rotateY(0.3f * sin(t));
+	mat4 local_mod = rotateX(tl * PI * 4.0f) * scale(0.25f);
+	for (int i = 0; i < cube_poses.size(); i++)
+		render_shadowed_mesh(mesh_box, global_mod * translate(cube_poses[i]) * local_mod, cube_colors[i]);
 }
 
 void on_key_up(uint16 mod, SDL_Keycode key) { }

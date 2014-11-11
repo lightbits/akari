@@ -82,9 +82,11 @@ int main(int argc, char **argv)
 		return EXIT_FAILURE;
 	}
 
-	int res_multiplier = 2;
-	int window_width = 180 * res_multiplier;
-	int window_height = 240 * res_multiplier;
+	//int res_multiplier = 2;
+	//int window_width = 180 * res_multiplier;
+	//int window_height = 240 * res_multiplier;
+	int window_width = 480;
+	int window_height = 320;
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);

@@ -53,18 +53,21 @@ static uint blank_texture;
 static Font *current_font = nullptr;
 static Shader shader;
 static mat4 mat_ortho;
-static float layer;
+static float layer = 0.0f;
+static bool in_begin_end_pair = false;
 
 void gfx2d::init(int width, int height)
 {
 	uint8 blank[] = { 255, 255, 255, 255 };
 	blank_texture = gen_texture(blank, 1, 1, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
+
 	vertex_buffer = gen_buffer(GL_ARRAY_BUFFER, MAX_VERTICES * VERTEX_SIZE, NULL, GL_DYNAMIC_DRAW);
+
 	bool status = shader.load_from_src(VERTEX_SHADER_SRC, FRAGMENT_SHADER_SRC);
 	ASSERT(status, "Failed to load default 2D shader");
+
 	mat_ortho = ortho(0.0f, float(width), float(height), 0.0f, 0.0f, 1.0f);
 	draw_cmds.clear();
-	layer = 0.0f;
 }
 
 void gfx2d::dispose()
@@ -112,7 +115,8 @@ void flush()
 
 void gfx2d::begin()
 {
-	// if (!initialized)
+	ASSERT(!in_begin_end_pair, "You need to end() before you start a new begin()");
+	in_begin_end_pair = true;
 
 	glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
 	glActiveTexture(GL_TEXTURE0);
@@ -126,7 +130,8 @@ void gfx2d::begin()
 
 void gfx2d::end()
 {
-	// if (!in_begin_end_pair)
+	ASSERT(in_begin_end_pair, "You need to begin() before you end()");
+	in_begin_end_pair = false;
 
 	flush();
 	unset_attrib("position");
