@@ -1,7 +1,27 @@
 #include "game.h"
 #include <algorithm>
 
-const uint BG_COLOR = 0x404968ff;
+// Todo: Add gfx2d functionality to draw arbitrary
+// polygons. Also specify transformation (rotation)
+
+const uint	BG_COLOR				= 0x404968ff;
+const int	PLAYER_BULLET_DAMAGE	= 5;
+const int	PLAYER_HITPOINTS		= 10;
+const float PLAYER_MOVE_SPEED		= 300.0f;
+const float PLAYER_BULLET_SPEED		= 300.0f;
+const float PLAYER_FIRE_TIME		= 0.2f;
+const int	ENEMY_BULLET_DAMAGE		= 10;
+const int	ENEMY_HITPOINTS			= 10;
+const float ENEMY_BULLET_SPEED		= 300.0f;
+const float ENEMY_MOVE_SPEED		= 100.0f;
+const float ENEMY_FIRE_TIME			= 2.0f;
+
+// Todo: load these from file
+// Make different enemy types have diff params
+// Archetypal enemies? copy from
+
+// Todo: Make cooldown timers go down when firing
+// charge up when not
 
 struct WorldObject
 {
@@ -79,15 +99,15 @@ int window_height;
 uint tex;
 World world;
 
-void new_enemy(float fire_time, float move_speed, float bullet_speed, vec2 position, vec2 velocity, vec2 acceleration)
+void new_enemy(vec2 position, vec2 velocity, vec2 acceleration)
 {
 	Enemy e;
-	e.fire_time = fire_time;
-	e.move_speed = move_speed;
-	e.bullet_speed = bullet_speed;
-	e.cooldown = fire_time;
-	e.hitpoints = 10;
-	e.bullet_damage = 10;
+	e.fire_time = ENEMY_FIRE_TIME;
+	e.move_speed = ENEMY_MOVE_SPEED;
+	e.bullet_speed = ENEMY_BULLET_SPEED;
+	e.cooldown = ENEMY_FIRE_TIME;
+	e.hitpoints = ENEMY_HITPOINTS;
+	e.bullet_damage = ENEMY_BULLET_DAMAGE;
 	e.lifetime = 0.0f;
 	e.dead = false;
 	e.obj.size = vec2(32.0f);
@@ -109,14 +129,14 @@ void new_bullet(vec2 position, vec2 velocity, int damage, vec2 acceleration)
 	world.bullets.push_back(b);
 }
 
-void init_player(float fire_time, float move_speed, float bullet_speed, vec2 position, vec2 velocity, vec2 acceleration)
+void init_player(vec2 position, vec2 velocity, vec2 acceleration)
 {
-	world.player.fire_time = fire_time;
-	world.player.move_speed = move_speed;
-	world.player.bullet_speed = bullet_speed;
+	world.player.fire_time = PLAYER_FIRE_TIME;
+	world.player.move_speed = PLAYER_MOVE_SPEED;
+	world.player.bullet_speed = PLAYER_BULLET_SPEED;
 	world.player.cooldown = 0.0f;
-	world.player.hitpoints = 10;
-	world.player.bullet_damage = 5;
+	world.player.hitpoints = PLAYER_HITPOINTS;
+	world.player.bullet_damage = PLAYER_BULLET_DAMAGE;
 	world.player.dead = false;
 	world.player.obj.size = vec2(32.0f);
 	world.player.obj.position = position;
@@ -174,6 +194,13 @@ void update_bullet(Bullet &b, float dt)
 	}
 }
 
+void clamp_speed(float max_speed, WorldObject &obj)
+{
+	float speed = length(obj.velocity);
+	if (speed > max_speed)
+		obj.velocity = normalize(obj.velocity) * max_speed;
+}
+
 void update_enemy(Enemy &e, float dt)
 {
 	update_world_object(e.obj, dt);
@@ -188,6 +215,7 @@ void update_enemy(Enemy &e, float dt)
 		// recoil on enemy?
 		e.cooldown += e.fire_time;
 	}
+	clamp_speed(e.move_speed, e.obj);
 	e.lifetime += dt;
 }
 
@@ -210,16 +238,13 @@ void update_player(Player &p, float dt)
 	else
 		p.obj.velocity.y = 0.0f;
 
-	// Clamp speed
-	float speed = length(p.obj.velocity);
-	if (speed >= p.move_speed)
-		p.obj.velocity = normalize(p.obj.velocity) * p.move_speed;
+	clamp_speed(p.move_speed, p.obj);
 
 	if (is_key_down(SDLK_z) && p.cooldown <= 0.0f)
 	{
 		vec2 dir = vec2(0.0f, -1.0f);
-		vec2 spawn_left = p.obj.position - vec2(0.0f, 8.0f);
-		vec2 spawn_right = p.obj.position + vec2(p.obj.size.x, 0.0f) - vec2(0.0f, 8.0f);
+		vec2 spawn_left = p.obj.position - vec2(0.0f, 16.0f);
+		vec2 spawn_right = p.obj.position + vec2(p.obj.size.x, 0.0f) - vec2(0.0f, 16.0f);
 		new_bullet(spawn_left, dir * p.bullet_speed, p.bullet_damage, vec2(0.0f));
 		new_bullet(spawn_right, dir * p.bullet_speed, p.bullet_damage, vec2(0.0f));
 		p.cooldown = p.fire_time;
@@ -242,12 +267,16 @@ void render_player(Player &p)
 {
 	using namespace gfx2d;
 	draw_rectangle(p.obj.position, p.obj.size, 0x4499ffff);
+
+	Text text;
+	text << int(p.hitpoints);
+	draw_string(p.obj.position, text.getString());
 }
 
 void render_bullet(Bullet &b)
 {
 	using namespace gfx2d;
-	draw_fill_rectangle(b.obj.position, b.obj.size, 0x55bb77ff);
+	draw_fill_rectangle(b.obj.position, b.obj.size, 0xd3baffff);
 }
 
 bool load_game(int width, int height)
@@ -270,12 +299,12 @@ void free_game()
 
 void init_game()
 {
-	new_enemy(2.0f, 300.0f, 400.0f, vec2(200.0f, 200.0f), vec2(0.0f, 0.0f), vec2(0.0f, 0.0f));
-	new_enemy(2.0f, 100.0f, 200.0f, vec2(90.0f, 30.0f), vec2(50.0f, 10.0f), vec2(0.0f, -10.0f));
-	new_enemy(2.0f, 100.0f, 200.0f, vec2(140.0f, 30.0f), vec2(50.0f, 10.0f), vec2(0.0f));
-	new_enemy(2.0f, 100.0f, 200.0f, vec2(180.0f, 30.0f), vec2(50.0f, 10.0f), vec2(0.0f));
-	new_enemy(2.0f, 100.0f, 200.0f, vec2(220.0f, 30.0f), vec2(50.0f, 10.0f), vec2(0.0f));
-	init_player(0.2f, 200.0f, 300.0f, vec2(200.0f, 400.0f), vec2(0.0f), vec2(0.0f));
+	new_enemy(vec2(200.0f, 200.0f), vec2(0.0f, 0.0f), vec2(0.0f, 0.0f));
+	new_enemy(vec2(90.0f, 30.0f), vec2(50.0f, 10.0f), vec2(0.0f, -10.0f));
+	new_enemy(vec2(140.0f, 30.0f), vec2(50.0f, 10.0f), vec2(0.0f));
+	new_enemy(vec2(180.0f, 30.0f), vec2(50.0f, 10.0f), vec2(0.0f));
+	new_enemy(vec2(220.0f, 30.0f), vec2(50.0f, 10.0f), vec2(0.0f));
+	init_player(vec2(200.0f, 400.0f), vec2(0.0f), vec2(0.0f));
 }
 
 void update_game(float dt)
@@ -322,10 +351,6 @@ void render_game(float dt)
 		for (int i = 0; i < world.bullets.size(); i++)
 			render_bullet(world.bullets[i]);
 		render_player(world.player);
-
-		draw_rectangle(vec2(get_mouse_pos()) - vec2(8.0f), vec2(16.0f), 0xffffffff);
-
-		draw_string(5.0f, 5.0f, "Hello World!");
 	}
 	gfx2d::end();
 }
