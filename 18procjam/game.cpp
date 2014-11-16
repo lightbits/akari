@@ -1,80 +1,262 @@
 #include "game.h"
+#include <algorithm>
+
+const uint BG_COLOR = 0x404968ff;
+
+struct WorldObject
+{
+	vec2 size;
+	vec2 position;
+	vec2 velocity;
+	vec2 acceleration;
+};
+
+struct LivingThing
+{
+	// Parameters
+	float fire_time;
+	float move_speed;
+	float bullet_speed;
+	int bullet_damage;
+
+	// State
+	float cooldown;
+	float lifetime;
+	int hitpoints;
+	bool dead;
+};
+
+struct Enemy
+{
+	// Parameters
+	float fire_time;
+	float move_speed;
+	float bullet_speed;
+	int bullet_damage;
+
+	// State
+	float cooldown;
+	int hitpoints;
+	bool dead;
+	float lifetime;
+
+	WorldObject obj;
+};
+
+struct Player
+{
+	// Parameters
+	float move_speed;
+	float fire_time;
+	float bullet_speed;
+	int bullet_damage;
+
+	// State
+	float cooldown;
+	int hitpoints;
+	bool dead;
+
+	WorldObject obj;
+};
+
+struct Bullet
+{
+	float damage;
+	bool dead;
+	WorldObject obj;
+};
+
+struct World
+{
+	vector<Bullet> bullets;
+	vector<Enemy> enemies;
+	Player player;
+};
 
 Font font;
+int window_width;
+int window_height;
+uint tex;
+World world;
 
-vector<float> calculate_trajectory(float kp, float kd, float &score)
+void new_enemy(float fire_time, float move_speed, float bullet_speed, vec2 position, vec2 velocity, vec2 acceleration)
 {
-	float y0 = 0.0f;
-	float v0 = 0.0f;
-	float t = 0.0f;
-	float dt = 0.01f;
-	float T = 10.0f;
-	float y = y0;
-	float v = v0;
-	vector<float> trajectory;
-	float error1 = 0.0f;
-	float error2 = 0.0f;
-	while (t < T)
-	{
-		float a = -kp * (y - 1.0f) - kd * v;
-		v += a * dt;
-		y += v * dt;
-
-		error1 += max(y - 1.0f, 0.0f) * dt;
-		error2 += (y - 1.0f) * (y - 1.0f) * dt;
-
-		t += dt;
-		trajectory.push_back(y);
-	}
-	score = 10.0f * error1 + error2;
-	return trajectory;
+	Enemy e;
+	e.fire_time = fire_time;
+	e.move_speed = move_speed;
+	e.bullet_speed = bullet_speed;
+	e.cooldown = fire_time;
+	e.hitpoints = 10;
+	e.bullet_damage = 10;
+	e.lifetime = 0.0f;
+	e.dead = false;
+	e.obj.size = vec2(32.0f);
+	e.obj.position = position;
+	e.obj.velocity = velocity;
+	e.obj.acceleration = acceleration;
+	world.enemies.push_back(e);
 }
 
-void render_trajectory(vector<float> &trajectory, float sx, float sy, float x, float y)
+void new_bullet(vec2 position, vec2 velocity, int damage, vec2 acceleration)
+{
+	Bullet b;
+	b.obj.position = position;
+	b.obj.velocity = velocity;
+	b.obj.acceleration = acceleration;
+	b.obj.size = vec2(2.0f, 8.0f);
+	b.dead = false;
+	b.damage = damage;
+	world.bullets.push_back(b);
+}
+
+void init_player(float fire_time, float move_speed, float bullet_speed, vec2 position, vec2 velocity, vec2 acceleration)
+{
+	world.player.fire_time = fire_time;
+	world.player.move_speed = move_speed;
+	world.player.bullet_speed = bullet_speed;
+	world.player.cooldown = 0.0f;
+	world.player.hitpoints = 10;
+	world.player.bullet_damage = 5;
+	world.player.dead = false;
+	world.player.obj.size = vec2(32.0f);
+	world.player.obj.position = position;
+	world.player.obj.velocity = velocity;
+	world.player.obj.acceleration = acceleration;
+}
+
+void update_world_object(WorldObject &obj, float dt)
+{
+	obj.position += obj.velocity * dt;
+	obj.velocity += obj.acceleration * dt;
+}
+
+bool collides(WorldObject &a, WorldObject &b)
+{
+	if (a.position.x > b.position.x + b.size.x ||
+		a.position.x + a.size.x < b.position.x ||
+		a.position.y > b.position.y + b.size.y ||
+		a.position.y + a.size.y < b.position.y)
+		return false;
+	return true;
+}
+
+void hit_enemy(Enemy &e, float damage)
+{
+	e.hitpoints -= damage;
+	if (e.hitpoints <= 0)
+		e.dead = true;
+}
+
+void hit_player(Player &p, float damage)
+{
+	p.hitpoints -= damage;
+	if (p.hitpoints <= 0)
+		p.dead = true;
+}
+
+void update_bullet(Bullet &b, float dt)
+{
+	update_world_object(b.obj, dt);
+	for (int i = 0; i < world.enemies.size(); i++)
+	{
+		if (collides(b.obj, world.enemies[i].obj))
+		{
+			hit_enemy(world.enemies[i], b.damage);
+			b.dead = true;
+			return;
+		}
+	}
+
+	if (collides(b.obj, world.player.obj))
+	{
+		hit_player(world.player, b.damage);
+		b.dead = true;
+	}
+}
+
+void update_enemy(Enemy &e, float dt)
+{
+	update_world_object(e.obj, dt);
+	e.cooldown -= dt;
+	if (e.cooldown <= 0.0f)
+	{
+		vec2 direction = normalize(world.player.obj.position - e.obj.position);
+		vec2 velocity = direction * e.bullet_speed;
+		float body_radius = length(e.obj.size * 0.8f);
+		vec2 spawn_position = e.obj.position + direction * body_radius;
+		new_bullet(spawn_position, velocity, e.bullet_damage, vec2(0.0f));
+		// recoil on enemy?
+		e.cooldown += e.fire_time;
+	}
+	e.lifetime += dt;
+}
+
+void update_player(Player &p, float dt)
+{
+	if (p.cooldown > 0.0f)
+		p.cooldown -= dt;
+
+	if (is_key_down(SDLK_LEFT))
+		p.obj.velocity.x = -p.move_speed;
+	else if (is_key_down(SDLK_RIGHT))
+		p.obj.velocity.x = +p.move_speed;
+	else
+		p.obj.velocity.x = 0.0f;
+
+	if (is_key_down(SDLK_UP))
+		p.obj.velocity.y = -p.move_speed;
+	else if (is_key_down(SDLK_DOWN))
+		p.obj.velocity.y = +p.move_speed;
+	else
+		p.obj.velocity.y = 0.0f;
+
+	// Clamp speed
+	float speed = length(p.obj.velocity);
+	if (speed >= p.move_speed)
+		p.obj.velocity = normalize(p.obj.velocity) * p.move_speed;
+
+	if (is_key_down(SDLK_z) && p.cooldown <= 0.0f)
+	{
+		vec2 dir = vec2(0.0f, -1.0f);
+		vec2 spawn_left = p.obj.position - vec2(0.0f, 8.0f);
+		vec2 spawn_right = p.obj.position + vec2(p.obj.size.x, 0.0f) - vec2(0.0f, 8.0f);
+		new_bullet(spawn_left, dir * p.bullet_speed, p.bullet_damage, vec2(0.0f));
+		new_bullet(spawn_right, dir * p.bullet_speed, p.bullet_damage, vec2(0.0f));
+		p.cooldown = p.fire_time;
+	}
+
+	update_world_object(p.obj, dt);
+}
+
+void render_enemy(Enemy &e)
 {
 	using namespace gfx2d;
-	int n = trajectory.size();
-	int step = n / 32;
-	float dx = 1.0f / float(n - 1);
-	float x0 = 0.0f;
-	float y0 = trajectory[0];
-	int i = step;
-	while (i < n)
-	{
-		float y1 = trajectory[i];
-		float x1 = i * dx;
-		line(x + x0 * sx, y + y0 * sy, x + x1 * sx, y + y1 * sy, 0xffffffff);
-		x0 = x1;
-		y0 = y1;
-		i += step;
-	}
+	draw_rectangle(e.obj.position, e.obj.size, 0xff9944ff);
+
+	Text text;
+	text << int(e.hitpoints);
+	draw_string(e.obj.position, text.getString());
 }
 
-float kp_min = 0.0f;
-float kp_max = 10.0f;
-float kd_min = 0.0f;
-float kd_max = 10.0f;
-int kp_n = 30;
-int kd_n = 30;
-int ikp = 15;
-int ikd = 15;
-vector<float> mutation_space_kp;
-vector<float> mutation_space_kd;
-vector< vector<float> > score_table;
-float score = 1.0f; // Score of previous generation(s)
-float extinction_threshold = 0.5f; // If the score is > this, the species will become something new
-float mutation_threshold = 0.1f; // If the score is > this, the species will mutate
-float kp_mut_radius = 0.10f; // The maximum +- value when mutating kp
-float kd_mut_radius = 0.05f; // The maximum +- value when mutating kd
-vector<float> trajectory;
-int generation = 1;
-uint tex;
+void render_player(Player &p)
+{
+	using namespace gfx2d;
+	draw_rectangle(p.obj.position, p.obj.size, 0x4499ffff);
+}
+
+void render_bullet(Bullet &b)
+{
+	using namespace gfx2d;
+	draw_fill_rectangle(b.obj.position, b.obj.size, 0x55bb77ff);
+}
 
 bool load_game(int width, int height)
 {
 	if (!load_font(font, "../data/fonts/proggytinyttsz_8x12.png"))
 		return false;
 
+	window_width = width;
+	window_height = height;
 	gfx2d::init(width, height);
 	gfx2d::use_font(font);
 
@@ -88,82 +270,62 @@ void free_game()
 
 void init_game()
 {
-	for (int i = 0; i < kp_n; i++)
-		mutation_space_kp.push_back(kp_min + (kp_max - kp_min) * i / float(kp_n - 1));
-	for (int i = 0; i < kd_n; i++)
-		mutation_space_kd.push_back(kd_min + (kd_max - kd_min) * i / float(kd_n - 1));
-
-	for (int i = 0; i < kp_n; i++)
-	{
-		vector<float> row;
-		for (int j = 0; j < kd_n; j++)
-			row.push_back(1.0f);
-		score_table.push_back(row);
-	}
-
-	float kp = mutation_space_kp[ikp];
-	float kd = mutation_space_kd[ikd];
-	trajectory = calculate_trajectory(kp, kd, score);
-
-	tex = gen_texture(NULL, kp_n, kd_n, GL_RG8, GL_RED, GL_UNSIGNED_BYTE, GL_NEAREST, GL_NEAREST);
+	new_enemy(2.0f, 300.0f, 400.0f, vec2(200.0f, 200.0f), vec2(0.0f, 0.0f), vec2(0.0f, 0.0f));
+	new_enemy(2.0f, 100.0f, 200.0f, vec2(90.0f, 30.0f), vec2(50.0f, 10.0f), vec2(0.0f, -10.0f));
+	new_enemy(2.0f, 100.0f, 200.0f, vec2(140.0f, 30.0f), vec2(50.0f, 10.0f), vec2(0.0f));
+	new_enemy(2.0f, 100.0f, 200.0f, vec2(180.0f, 30.0f), vec2(50.0f, 10.0f), vec2(0.0f));
+	new_enemy(2.0f, 100.0f, 200.0f, vec2(220.0f, 30.0f), vec2(50.0f, 10.0f), vec2(0.0f));
+	init_player(0.2f, 200.0f, 300.0f, vec2(200.0f, 400.0f), vec2(0.0f), vec2(0.0f));
 }
 
 void update_game(float dt)
 {
-	if (is_key_down(SDLK_SPACE))
+	for (int i = 0; i < world.enemies.size(); i++)
 	{
-		generation++;
-		if (score > extinction_threshold)
+		if (world.enemies[i].dead)
 		{
-			ikp = int(frand() * (kp_n - 1));
-			ikd	= int(frand() * (kd_n - 1));
+			world.enemies.erase(world.enemies.begin() + i);
+			i--;
 		}
-		else if (score > mutation_threshold)
+		else
 		{
-			ikp = ikp + kp_mut_radius * (-1.0f + 2.0f * frand()) * kp_n;
-			ikd = ikd + kd_mut_radius * (-1.0f + 2.0f * frand()) * kd_n;
-			ikp = clamp(ikp, 0, kp_n - 1);
-			ikd = clamp(ikd, 0, kd_n - 1);
+			update_enemy(world.enemies[i], dt);
 		}
-		float kp = mutation_space_kp[ikp];
-		float kd = mutation_space_kd[ikd];
-		trajectory = calculate_trajectory(kp, kd, score);
-		score_table[ikp][ikd] = score;
 	}
+
+	for (int i = 0; i < world.bullets.size(); i++)
+	{
+		if (world.bullets[i].dead)
+		{
+			world.bullets.erase(world.bullets.begin() + i);
+			i--;
+		}
+		else
+		{
+			update_bullet(world.bullets[i], dt);
+		}
+	}
+
+	update_player(world.player, dt);
 }
 
 void render_game(float dt)
 {
-	glBindTexture(GL_TEXTURE_2D, tex);
-	float *pixels = new float[kp_n * kd_n * 2];
-	for (int i = 0; i < kp_n; i++)
-	{
-		for (int j = 0; j < kd_n; j++)
-		{
-			pixels[2 * (j + i * kp_n) + 0] = score_table[i][j];
-		}
-	}
-	pixels[2 * (ikd + ikp * kp_n) + 1] = 1.0f;
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kp_n, kd_n, GL_RG, GL_FLOAT, pixels);
-	delete[] pixels;
-
 	gfx2d::begin();
 	{
 		using namespace gfx2d;
-		blend_mode(true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_FUNC_ADD);
-		clearc(0x44484Bff);
+		clearc(BG_COLOR);
+		blend_mode(true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		float kp = mutation_space_kp[ikp];
-		float kd = mutation_space_kd[ikd];
-		Text text;
-		text << "score: " << score << '\n';
-		text << "kp: " << kp << '\n';
-		text << "kd: " << kd << '\n';
-		text << "generation: " << generation << '\n';
+		for (int i = 0; i < world.enemies.size(); i++)
+			render_enemy(world.enemies[i]);
+		for (int i = 0; i < world.bullets.size(); i++)
+			render_bullet(world.bullets[i]);
+		render_player(world.player);
 
-		draw_string(5.0f, 5.0f, text.getString());
-		tex_rectangle(0.0f, 200.0f, 100.0f, 100.0f, tex);
-		render_trajectory(trajectory, 470.0f, -240.0f, 5.0f, 320.0f);
+		draw_rectangle(vec2(get_mouse_pos()) - vec2(8.0f), vec2(16.0f), 0xffffffff);
+
+		draw_string(5.0f, 5.0f, "Hello World!");
 	}
 	gfx2d::end();
 }

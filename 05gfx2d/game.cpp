@@ -98,11 +98,11 @@ void draw_textbox(float x, float y, float width, float height)
 	uint color_bg = 0x00003EFF;
 	uint color_hi = 0x69656DFF;
 	uint color_lo = 0x343255FF;
-	fill_rectangle(x, y, width, height, color_bg);
-	line(x, y, x + width, y, color_lo);
-	line(x, y, x, y + height, color_lo);
-	line(x, y + height, x + width, y + height, color_hi);
-	line(x + width, y, x + width, y + height, color_hi);
+	draw_fill_rectangle(x, y, width, height, color_bg);
+	draw_line(x, y, x + width, y, color_lo);
+	draw_line(x, y, x, y + height, color_lo);
+	draw_line(x, y + height, x + width, y + height, color_hi);
+	draw_line(x + width, y, x + width, y + height, color_hi);
 }
 
 void draw_panel(float x, float y, float width, float height)
@@ -113,14 +113,14 @@ void draw_panel(float x, float y, float width, float height)
 	uint color_sp = 0x837E78FF;
 	uint color_hi = 0x69656DFF;
 	uint color_lo = 0x343255FF;
-	line(x, y, x + width, y, color_hi);
-	line(x, y, x, y + height, color_hi);
-	line(x, y + height, x + width, y + height, color_lo);
-	line(x + width, y, x + width, y + height, color_lo);
-	fill_rectangle(x + 1.0f, y + 1.0f, 1.0f, 1.0f, color_sp);
-	fill_rectangle(x + width - 3.0f, y + 1.0f, 1.0f, 1.0f, color_sp);
-	fill_rectangle(x + 1.0f, y + height - 3.0f, 1.0f, 1.0f, color_sp);
-	fill_rectangle(x + width - 3.0f, y + height - 3.0f, 1.0f, 1.0f, color_sp);
+	draw_line(x, y, x + width, y, color_hi);
+	draw_line(x, y, x, y + height, color_hi);
+	draw_line(x, y + height, x + width, y + height, color_lo);
+	draw_line(x + width, y, x + width, y + height, color_lo);
+	draw_fill_rectangle(x + 1.0f, y + 1.0f, 1.0f, 1.0f, color_sp);
+	draw_fill_rectangle(x + width - 3.0f, y + 1.0f, 1.0f, 1.0f, color_sp);
+	draw_fill_rectangle(x + 1.0f, y + height - 3.0f, 1.0f, 1.0f, color_sp);
+	draw_fill_rectangle(x + width - 3.0f, y + height - 3.0f, 1.0f, 1.0f, color_sp);
 }
 
 void render_game(float dt)
@@ -133,12 +133,12 @@ void render_game(float dt)
 	begin();
 
 	for (int i = 0; i < stars.size(); i++)
-		fill_rectangle(stars[i].position - vec2(2.0f), vec2(4.0f), stars[i].color);
+		draw_fill_rectangle(stars[i].position - vec2(2.0f), vec2(4.0f), stars[i].color);
 
 	//draw_textbox(10.0f, 60.0f, 64.0f, 14.0f);
 	//draw_panel(100.0f, 160.0f, 200.0f, 100.0f);
 	//draw_panel(300.0f, 160.0f, 100.0f, 100.0f);
-	//tex_rectangle(101.0f, 161.0f, 198.0f, 98.0f, tex_test);
+	//draw_tex_rectangle(101.0f, 161.0f, 198.0f, 98.0f, tex_test);
 
 	//use_font(font_debug);
 	//draw_string(5.0f, 5.0f, "Hello World!");

@@ -316,7 +316,7 @@ void update_game(float dt)
 void render_object(const Object &object)
 {
 	using namespace gfx2d;
-	rectangle(object.bounds.position, object.bounds.size, object.color);
+	draw_rectangle(object.bounds.position, object.bounds.size, object.color);
 }
 
 void render_symbol_3D(int n, vec2 position, uint color)
@@ -453,11 +453,11 @@ void render_game(float dt)
 	//		{
 	//			vec2 center = objects[i].bounds.position + objects[i].bounds.size * 0.5f;
 	//			line(center, center + displacement, 0xff8877ff);
-	//			rectangle(objects[i].bounds.position, objects[i].bounds.size, 0xff7755ff);
+	//			draw_rectangle(objects[i].bounds.position, objects[i].bounds.size, 0xff7755ff);
 	//		}
 	//		else
 	//		{
-	//			rectangle(objects[i].bounds.position, objects[i].bounds.size, 0xffffffff);
+	//			draw_rectangle(objects[i].bounds.position, objects[i].bounds.size, 0xffffffff);
 	//		}
 	//	}
 	//}

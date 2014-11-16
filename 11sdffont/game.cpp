@@ -77,7 +77,7 @@ void surf3d(vec3 p, vec3 n, float radius, uint color)
 	vec2 v1 = project(p - u * radius + r * radius);
 	vec2 v2 = project(p + u * radius + r * radius);
 	vec2 v3 = project(p + u * radius - r * radius);
-	gfx2d::fill_quad(v0, v1, v2, v3, color);
+	gfx2d::draw_fill_quad(v0, v1, v2, v3, color);
 }
 
 void render_game(float dt)

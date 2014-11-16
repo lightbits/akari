@@ -161,8 +161,8 @@ void gfx2d::set_layer(float depth)
 	layer = depth;
 }
 
-void gfx2d::line(vec2 p0, vec2 p1, uint color) { line(p0.x, p0.y, p1.x, p1.y, color); }
-void gfx2d::line(float x0, float y0, float x1, float y1, uint color)
+void gfx2d::draw_line(vec2 p0, vec2 p1, uint color) { draw_line(p0.x, p0.y, p1.x, p1.y, color); }
+void gfx2d::draw_line(float x0, float y0, float x1, float y1, uint color)
 {
 	vec4 v_color = to_rgba(color);
 	float data[] = {
@@ -172,8 +172,8 @@ void gfx2d::line(float x0, float y0, float x1, float y1, uint color)
 	append_data(data, 2, GL_LINES, blank_texture);
 }
 
-void gfx2d::rectangle(vec2 p, vec2 size, uint color) { rectangle(p.x, p.y, size.x, size.y, color); }
-void gfx2d::rectangle(float x, float y, float w, float h, uint color)
+void gfx2d::draw_rectangle(vec2 p, vec2 size, uint color) { draw_rectangle(p.x, p.y, size.x, size.y, color); }
+void gfx2d::draw_rectangle(float x, float y, float w, float h, uint color)
 {
 	vec4 v_color = to_rgba(color);
 	float data[] = {
@@ -186,7 +186,7 @@ void gfx2d::rectangle(float x, float y, float w, float h, uint color)
 	append_data(data, 5, GL_LINE_STRIP, blank_texture);
 }
 
-void gfx2d::fill_quad(vec2 v0, vec2 v1, vec2 v2, vec2 v3, uint color)
+void gfx2d::draw_fill_quad(vec2 v0, vec2 v1, vec2 v2, vec2 v3, uint color)
 {
 	vec4 v_color = to_rgba(color);
 	float data[] = {
@@ -200,8 +200,8 @@ void gfx2d::fill_quad(vec2 v0, vec2 v1, vec2 v2, vec2 v3, uint color)
 	append_data(data, 6, GL_TRIANGLES, blank_texture);
 }
 
-void gfx2d::fill_rectangle(vec2 p, vec2 size, uint color) { fill_rectangle(p.x, p.y, size.x, size.y, color); }
-void gfx2d::fill_rectangle(float x, float y, float w, float h, uint color)
+void gfx2d::draw_fill_rectangle(vec2 p, vec2 size, uint color) { draw_fill_rectangle(p.x, p.y, size.x, size.y, color); }
+void gfx2d::draw_fill_rectangle(float x, float y, float w, float h, uint color)
 {
 	vec4 v_color = to_rgba(color);
 	float data[] = {
@@ -215,8 +215,8 @@ void gfx2d::fill_rectangle(float x, float y, float w, float h, uint color)
 	append_data(data, 6, GL_TRIANGLES, blank_texture);
 }
 
-void gfx2d::tex_rectangle(vec2 p, vec2 size, uint texture, uint color) { tex_rectangle(p.x, p.y, size.x, size.y, texture, color); }
-void gfx2d::tex_rectangle(float x, float y, float w, float h, uint texture, uint color)
+void gfx2d::draw_tex_rectangle(vec2 p, vec2 size, uint texture, uint color) { draw_tex_rectangle(p.x, p.y, size.x, size.y, texture, color); }
+void gfx2d::draw_tex_rectangle(float x, float y, float w, float h, uint texture, uint color)
 {
 	vec4 v_color = to_rgba(color);
 	float data[] = {

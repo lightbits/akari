@@ -1,0 +1,8 @@
+<STILL UNTITLED>
+DEVLOG
+
+
+16. november 2014
+-----------------
+Added shooting enemies and ability to shoot. Enemies move in a boring pattern though.
+[screenshot000]
