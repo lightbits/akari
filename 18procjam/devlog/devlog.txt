@@ -1,8 +1,10 @@
 <STILL UNTITLED>
 DEVLOG
 
+http://chaiscript.com/releases.html
+
 
 16. november 2014
 -----------------
-Added shooting enemies and ability to shoot. Enemies move in a boring pattern though.
+Added shooting enemies and ability to shoot. Enemies move in a boring pattern though. Lasers can be arbitrarily placed on bodies.
 [screenshot000]

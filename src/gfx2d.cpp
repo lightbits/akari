@@ -110,6 +110,7 @@ void flush()
 		glDrawArrays(current_mode, begin, count);
 	}
 
+	vertex_count = 0;
 	draw_cmds.clear();
 }
 
@@ -139,7 +140,6 @@ void gfx2d::end()
 	unset_attrib("color");
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindTexture(GL_TEXTURE_2D, 0);
-	vertex_count = 0;
 }
 
 void append_data(float *data, int count, GLenum mode, uint texture)
