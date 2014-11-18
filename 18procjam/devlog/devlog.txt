@@ -8,3 +8,8 @@ http://chaiscript.com/releases.html
 -----------------
 Added shooting enemies and ability to shoot. Enemies move in a boring pattern though. Lasers can be arbitrarily placed on bodies.
 [screenshot000]
+
+17. november 2014
+-----------------
+Added dynamic enemy behaviours. Now you can specify some path for an enemy to follow, when to shoot bullets, animated, and so on. This will become useful later, when I add the procedural enemy generation. My intention is to generate these routines procedurally, in some interesting fashion.
+[screenshot001]
