@@ -5,8 +5,13 @@
 #include "stb_image.h"
 
 bool load_texture_from_file(
-	uint &texture, const char *filename, bool flip_y,
-	GLenum min_filter, GLenum mag_filter, GLenum wrap_s, GLenum wrap_t)
+	uint &texture, 
+	const char *filename, 
+	bool flip_y,
+	GLenum min_filter, 
+	GLenum mag_filter, 
+	GLenum wrap_s, 
+	GLenum wrap_t)
 {
 	int width, height, channels;
 	uint8 *pixels = stbi_load(filename, &width, &height, &channels, 4);

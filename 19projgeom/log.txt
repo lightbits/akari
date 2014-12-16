@@ -1,0 +1,11 @@
+Debug context: no
+HW accelerated: yes
+Double buffered: yes
+FSAA samples: 4
+Depth bits: 24
+Stencil bits: 8
+RGBA bits: 8 8 8 8
+Vendor: Intel
+Renderer: Intel(R) HD Graphics 3000
+GL ver.: 3.1.0 - Build 9.17.10.2932
+GLSL ver.: 1.40 - Intel Build 9.17.10.2932

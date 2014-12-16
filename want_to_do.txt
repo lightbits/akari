@@ -1,0 +1,24 @@
+framebuffer.h
+-------------
+
+struct Framebuffer
+{
+    int width;
+    int height;
+    uint id;
+    // flags  
+};
+
+use_framebuffer(...)
+
+texture.h
+---------
+
+struct Texture2D
+{
+    ...
+}
+
+load_from_raw_data(Texture2D *texture, void *data)
+load_from_raw_data(Shader *shader, ...)
+load_from_file(Texture2D *texture, const char *filename)

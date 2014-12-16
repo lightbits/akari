@@ -2,6 +2,72 @@
 #include "gfx.h"
 #include "log.h"
 
+Mesh Primitive::cube()
+{
+	const float hs = 0.5f;
+
+	// All faces are oriented counter-clockwise outwards
+	float vertices[] = {
+		// Front
+		-hs, -hs,  hs, 
+		 hs, -hs,  hs, 
+		 hs,  hs,  hs, 
+		-hs,  hs,  hs, 
+
+		// Back
+		 hs, -hs, -hs, 
+		-hs, -hs, -hs, 
+		-hs,  hs, -hs, 
+		 hs,  hs, -hs, 
+
+		// Left
+		-hs, -hs, -hs, 
+		-hs, -hs,  hs, 
+		-hs,  hs,  hs, 
+		-hs,  hs, -hs, 
+
+		// Right
+		 hs, -hs,  hs, 
+		 hs, -hs, -hs, 
+		 hs,  hs, -hs, 
+		 hs,  hs,  hs, 
+
+		// Top
+		-hs,  hs,  hs, 
+		 hs,  hs,  hs, 
+		 hs,  hs, -hs, 
+		-hs,  hs, -hs, 
+
+		// Bottom
+		 hs, -hs,  hs, 
+		-hs, -hs,  hs, 
+		-hs, -hs, -hs, 
+		 hs, -hs, -hs
+	};
+
+	uint32 indices[] = {
+		0, 1, 2, 2, 3, 0, // Front
+		4, 5, 6, 6, 7, 4, // Back
+		8, 9, 10, 10, 11, 8, // Left
+		12, 13, 14, 14, 15, 12, // Right
+		16, 17, 18, 18, 19, 16, // Top
+		20, 21, 22, 22, 23, 20 // Bottom
+	};
+
+	Mesh mesh;
+	mesh.vertex_buffer = gen_buffer(GL_ARRAY_BUFFER, sizeof(vertices), vertices);
+	mesh.index_buffer = gen_buffer(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices);
+	mesh.num_indices = 36;
+	mesh.num_vertices = 24;
+	mesh.draw = [=]() {
+		glBindBuffer(GL_ARRAY_BUFFER, mesh.vertex_buffer);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.index_buffer);
+		attribfv("position", 3, 3, 0);
+		glDrawElements(GL_TRIANGLES, mesh.num_indices, GL_UNSIGNED_INT, 0);
+	};
+	return mesh;
+}
+
 Mesh Primitive::normal_cube()
 {
 	const float hs = 0.5f;
@@ -117,7 +183,6 @@ Mesh Primitive::quad()
 	mesh.num_vertices = 6;
 	mesh.draw = [=]() {
 		glBindBuffer(GL_ARRAY_BUFFER, mesh.vertex_buffer);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.index_buffer);
 		attribfv("position", 2, 2, 0);
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 	};
@@ -133,22 +198,19 @@ Mesh Primitive::tex_quad()
 		-hs, -hs, 0.0f, 0.0f,
 		 hs, -hs, 1.0f, 0.0f,
 		 hs,  hs, 1.0f, 1.0f,
-		-hs,  hs, 0.0f, 1.0f
+		 hs,  hs, 1.0f, 1.0f,
+		-hs,  hs, 0.0f, 1.0f,
+		-hs, -hs, 0.0f, 0.0f
 	};
-
-	uint8 indices[] = { 0, 1, 2, 2, 3, 0 };
 
 	Mesh mesh;
 	mesh.vertex_buffer = gen_buffer(GL_ARRAY_BUFFER, sizeof(vertices), vertices);
-	mesh.index_buffer = gen_buffer(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices);
-	mesh.num_indices = 6;
 	mesh.num_vertices = 4;
 	mesh.draw = [=]() {
 		glBindBuffer(GL_ARRAY_BUFFER, mesh.vertex_buffer);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.index_buffer);
 		attribfv("position", 2, 4, 0);
 		attribfv("texel", 2, 4, 2);
-		glDrawElements(GL_TRIANGLES, mesh.num_indices, GL_UNSIGNED_BYTE, 0);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
 	};
 	return mesh;
 }

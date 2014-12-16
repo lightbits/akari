@@ -10,4 +10,6 @@ struct Window
 	float frame_time;
 };
 
+// Get aspect ratio...
+
 #endif

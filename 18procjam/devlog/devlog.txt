@@ -3,6 +3,11 @@ DEVLOG
 
 http://chaiscript.com/releases.html
 
+https://twitter.com/1041uuu
+http://forums.tigsource.com/index.php?topic=42246.100
+
+Inverse kinematics
+http://www.euclideanspace.com/physics/kinematics/joints/ik/index.htm
 
 16. november 2014
 -----------------

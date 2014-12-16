@@ -23,6 +23,7 @@ RenderTexture gen_rendertexture(int width, int height, GLenum internal_format,
 	glBindFramebuffer(GL_FRAMEBUFFER, rt.fbo);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, rt.color, 0);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rt.depth);
+	glReadBuffer(GL_COLOR_ATTACHMENT0); // TODO: Find out what this does
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	return rt;
 }
