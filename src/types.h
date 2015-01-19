@@ -4,13 +4,15 @@
 #include <sstream>
 #include <vector>
 #include <unordered_map>
-typedef unsigned int	uint;
-typedef unsigned int	uint32;
-typedef unsigned short	uint16;
-typedef unsigned char	uint8;
-typedef signed int		int32;
-typedef signed short	int16;
-typedef signed char		int8;
+#include <stdint.h>
+typedef uint32_t	uint;
+typedef uint64_t	uint64;
+typedef uint32_t	uint32;
+typedef uint16_t	uint16;
+typedef uint8_t		uint8;
+typedef int32_t		int32;
+typedef int16_t		int16;
+typedef int8_t		int8;
 using std::string;
 using std::vector;
 using std::unordered_map;

@@ -1,0 +1,11 @@
+Debug context: no
+HW accelerated: yes
+Double buffered: yes
+FSAA samples: 4
+Depth bits: 24
+Stencil bits: 8
+RGBA bits: 8 8 8 8
+Vendor: ATI Technologies Inc.
+Renderer: AMD Radeon HD 6800 Series
+GL ver.: 3.1.12874 Compatibility Profile Context 14.100.0.0
+GLSL ver.: 4.30

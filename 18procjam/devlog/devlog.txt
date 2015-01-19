@@ -2,9 +2,20 @@
 DEVLOG
 
 http://chaiscript.com/releases.html
+http://nullprogram.com/blog/2014/06/10/
+http://nullprogram.com/blog/2014/12/23/
+
+http://www.reddit.com/r/gamedev/comments/2r25m0/genetic_algorithms_in_games/
+
+http://blog.rabidgremlin.com/2014/12/09/procedural-content-generation-l-systems/
+https://davidgow.net/handmadepenguin/ch7.html
+http://davidgow.net/handmadepenguin/ch12.html
 
 https://twitter.com/1041uuu
 http://forums.tigsource.com/index.php?topic=42246.100
+
+Map bullet position/velocity to vertex buffer.
+In vertex shader: apply rotation and translation based on p and v.
 
 Inverse kinematics
 http://www.euclideanspace.com/physics/kinematics/joints/ik/index.htm

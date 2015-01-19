@@ -162,7 +162,7 @@ void render_game(float dt)
 	lp_c = vec4(0.5f) + 0.5f * lp_c / lp_c.w;
 	vec2 texel = vec2(lp_c.x, 1.0f - lp_c.y);
 	texel *= vec2(window_width, window_height);
-	gfx2d::fill_rectangle(texel.x - 8.0f, texel.y - 8.0f, 16.0f, 16.0f, 0x8899ffff);
+	gfx2d::draw_fill_rectangle(texel.x - 8.0f, texel.y - 8.0f, 16.0f, 16.0f, 0x8899ffff);
 	gfx2d::end();
 }
 

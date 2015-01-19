@@ -37,6 +37,9 @@ solution "akari"
 	include "17invkine"
 	include "18procjam"
 	include "19projgeom"
+	include "20netclient"
+	include "21netserver"
+	include "22pathtracer"
 	
 	-- Specify the base graphics library
 	project "akari"
