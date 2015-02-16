@@ -37,10 +37,9 @@ solution "akari"
 	include "17invkine"
 	include "18procjam"
 	include "19projgeom"
-	include "20netclient"
-	include "21netserver"
-	include "22pathtracer"
-	
+	include "20craft"
+	include "21decals"
+
 	-- Specify the base graphics library
 	project "akari"
 		kind "StaticLib"

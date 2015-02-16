@@ -55,7 +55,7 @@ vec2 project(vec3 v)
 
 void line3d(vec3 p0, vec3 p1, uint color)
 {
-	gfx2d::line(project(p0), project(p1), color);
+	gfx2d::draw_line(project(p0), project(p1), color);
 }
 
 void surf3d(vec3 p, vec3 n, float radius, uint color)

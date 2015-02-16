@@ -164,7 +164,7 @@ void update_game(float dt)
 void render_object(const Object &object)
 {
 	using namespace gfx2d;
-	rectangle(object.position, object.size, 0xffffffff);
+	draw_rectangle(object.position, object.size, 0xffffffff);
 	Text text;
 	text << "x: " << object.velocity.x << ", y: " << object.velocity.y;
 	text << '\n' << object.mass;
