@@ -14,7 +14,8 @@ mat4 rotateX(float rad)
 {
 	float co = cosf(rad); float si = sinf(rad);
 	mat4 m(1.0f);
-	m[1][1] = co; m[1][2] = -si; m[2][1] = si; m[2][2] = co;
+	m[1][1] = co; m[1][2] = -si; m[2][1] = si; m[2][2] = co; // This is wrong, though!
+	// Should be m[1][2] = +si; m[2][1] = -si;
 	return m;
 }
 

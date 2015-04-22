@@ -1,0 +1,97 @@
+
+Metaprogramming!!
+-----------------
+
+#DeclareShader
+    @Name diffuse
+    @VertexShaderPath ./shaders/diffuse.vs
+    @FragmentShaderPath ./shaders/diffuse.fs
+
+    @Attribs
+    position     vec3
+    normal       vec3
+
+    @Uniforms
+    albedo      vec3
+    projection  mat4
+    view        mat4
+    model       mat4
+#EndDeclareShader
+
+int main()
+{
+    #LoadShader diffuse
+
+    #UseShader diffuse
+    #Attrib position
+    #Attrib normal
+    #Uniform albedo vec3(1.0, 0.7, 0.2)
+    #Uniform projection mat_projection
+    #Uniform view mat_view
+    #Uniform model mat_model
+}
+
+-----------------------------------
+
+This nice and readable meta-code will
+translate into the following C code :)
+
+------------------------------------
+
+struct ProgramDiffuse
+{
+    GLuint HANDLE;
+    GLint position;
+    GLint normal;
+    GLint albedo;
+    GLint projection;
+    GLint view;
+    GLint model;
+
+    GLsizei position_size;
+    GLsizei normal_size;
+};
+
+int main()
+{
+    ProgramDiffuse program_diffuse = {};
+    if (!load_shader(&program_diffuse.HANDLE, "./shaders/diffuse.vs", "./shaders/diffuse.fs"))
+        return EXIT_FAILURE;
+
+    program_diffuse.position = glGetAttribLocation(program_diffuse, "position");
+    program_diffuse.normal = glGetAttribLocation(program_diffuse, "normal");
+    program_diffuse.albedo = glGetUniformLocation(program_diffuse, "albedo");
+    program_diffuse.projection = glGetUniformLocation(program_diffuse, "projection");
+    program_diffuse.view = glGetUniformLocation(program_diffuse, "view");
+    program_diffuse.model = glGetUniformLocation(program_diffuse, "model");
+
+    program_diffuse.position_size = sizeof(vec3);
+    program_diffuse.normal_size = sizeof(vec3);
+
+    glUseProgram(program_diffuse.handle);
+    int stride = program_diffuse.position_size + program_diffuse.normal_size;
+    int offset_0 = 0;
+    int offset_1 = program_diffuse.position_size;
+    glEnableVertexAttribArray(program_diffuse.position);
+    glVertexAttribPointer(
+        program_diffuse.position,
+        program_diffuse.position_size,
+        GL_FLOAT,
+        GL_FALSE,
+        stride,
+        (const void*)offset_0);
+    glEnableVertexAttribArray(program_diffuse.normal);
+    glVertexAttribPointer(
+        program_diffuse.normal,
+        program_diffuse.normal_size,
+        GL_FLOAT,
+        GL_FALSE,
+        stride,
+        (const void*)offset_1);
+
+    glUniform3f(program_diffuse.albedo, 1.0f, 0.7f, 0.2f);
+    glUniformMatrix4fv(program_diffuse.projection, 1, GL_FALSE, mat_projection);
+    glUniformMatrix4fv(program_diffuse.view, 1, GL_FALSE, mat_view);
+    glUniformMatrix4fv(program_diffuse.model, 1, GL_FALSE, mat_model);
+}
+
